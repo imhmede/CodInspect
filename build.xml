@@ -45,7 +45,7 @@
         </taskdef>
         <!-- <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.lib"/> -->
         <pmd>
-            <ruleset>conf/rulesets.xml</ruleset>
+            <ruleset>${config.dir}/rulesets.xml</ruleset>
             <formatter type="xml" toFile="${reports.dir}/pmd.xml"/>
             <fileset dir="${src.dir}">
                 <include name="**/*.java"/>
