@@ -3,7 +3,7 @@ import java.util.Scanner;
 /**
  * This program reads an integer and breaks it into a sequence of individual digits.
  * Solution for problem 2.
- * @uthor CS123 students
+ * @author Essa Imhmed
  * @date Feb 10, 2025
  */
 public class Tokenizer {
