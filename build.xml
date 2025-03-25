@@ -1,0 +1,68 @@
+<project name="CodInspect" basedir="." default="rebuild">
+    
+    <!-- Properties -->
+    <property name="src.dir" location="src"/>
+    <property name="config.dir" location="config"/>
+    <property name="build.dir" location="build"/>
+    <property name="reports.dir" location="${build.dir}/test-reports"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="Java.version" value ="17"/>
+
+    <!-- Path Setup -->
+    <path id="classpath">
+        <pathelement location="${build.dir}"/>
+        <pathelement location="${src.dir}"/>
+        <pathelement location="${config.dir}"/>
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+            <exclude name="/rulesets" />
+        </fileset>
+    </path>
+
+    <target name="checkstyle"
+            description="Generates a report of code convention violations.">
+        <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
+                classpath="${lib.dir}/checkstyle-10.20.1-all.jar"/>
+        <checkstyle config="${config.dir}/sun_checks.xml" 
+                    failureProperty="checkstyle.failure" 
+                    failOnViolation="false">
+            <formatter type="xml" tofile="${report.dir}/checkstyle-result.xml"/>
+            <fileset dir="${src.dir}" includes="**/*.java"/>
+        </checkstyle>
+    </target>
+
+    <target name="pmd">
+        <echo message="PMD Starting-----" />
+        <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="classpath">
+            <classpath>
+                <fileset dir="${lib.dir}/pmd-bin-7.11.0/lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </taskdef>
+        <!-- <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.lib"/> -->
+        <pmd>
+            <ruleset>${config.dir}/ruleset.xml</ruleset>
+            <formatter type="xml" toFile="${reports.dir}/pmd.xml"/>
+            <fileset dir="${src.dir}">
+                <include name="**/*.java"/>
+            </fileset>    
+        </pmd>
+    </target>  
+
+    <target name="clean">
+        <!-- Delete the classes directory -->
+        <delete dir="${build.dir}" />
+    </target>
+
+    <target name="init" depends="clean">
+        <!-- Create the classes directory if it doesn't exist -->
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${reports.dir}" />
+    </target>
+
+    <target name="rebuild" depends="clean, init, checkstyle, pmd" />
+
+    </project>
+
