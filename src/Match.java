@@ -1,5 +1,10 @@
 package src;
 
+/**
+ * This program fins occurrence of a char in a string.
+ * @author Essa Imhmed
+ */
+
 public class Match {
 
     public static int find(String line, char target) {
