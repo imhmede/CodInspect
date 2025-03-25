@@ -6,6 +6,10 @@
     <property name="build.dir" location="build"/>
     <property name="reports.dir" location="${build.dir}/test-reports"/>
     <property name="lib.dir" location="lib"/>
+    <property name="test.dir" location="test"/>
+    <property name="junit.jar" location="${lib.dir}/junit-4.13.2.jar"/>
+    <property name="hamcrest.jar" location="${lib.dir}/hamcrest-2.2.jar"/>
+    <property name="main.class" value="src.Match" />
     <property name="Java.version" value ="17"/>
 
     <!-- Path Setup -->
@@ -13,6 +17,7 @@
         <pathelement location="${build.dir}"/>
         <pathelement location="${src.dir}"/>
         <pathelement location="${config.dir}"/>
+        <pathelement location="${test.dir}"/>
         <fileset dir="${lib.dir}" includes="*.jar"/>
         <fileset dir="${lib.dir}">
             <include name="*.jar"/>
@@ -64,7 +69,48 @@
         <mkdir dir="${reports.dir}" />
     </target>
 
-    <target name="rebuild" depends="clean, init, checkstyle, pmd" />
+    <!-- Compile Java classes -->
+    <target name="compile" depends="init">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}:${test.dir}" destdir="${build.dir}" includeantruntime="false">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <!-- Run JUnit tests -->
+    <target name="test" depends="compile">
+        <junit printsummary="yes" haltonfailure="false" fork="yes">
+            <formatter type="xml"/>
+            <classpath>
+                <path refid="classpath"/>
+                <pathelement location="${junit.jar}"/>
+                <pathelement location="${hamcrest.jar}"/>
+                <!-- <pathelement location="${test.build.dir}"/>
+                <fileset dir="${build.dir}/test" includes="*.class"/> -->
+            </classpath>
+
+            <formatter type="plain"/>
+
+            <!-- <test name="TestCases" haltonfailure="no" outfile="result">
+                <formatter type="xml"/>
+            </test> -->
+
+            <batchtest fork="yes" todir="${reports.dir}">
+                <fileset dir="${test.dir}">
+                    <include name="**/*Test*.java"/>
+                    <exclude name="**/*AbstractTest.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <!-- <junitreport todir="${reports.dir}">
+            <fileset dir="${reports.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+        </junitreport>
+        <record name="${reports.dir}/test-output.txt" action="stop"/> -->
+    </target>
+
+    <target name="rebuild" depends="clean, init, compile, test" />
 
     </project>
 

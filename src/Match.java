@@ -1,3 +1,5 @@
+package src;
+
 public class Match {
 
     public static int find(String line, char target) {
