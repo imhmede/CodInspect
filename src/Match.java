@@ -2,7 +2,7 @@ package src;
 
 /**
  * This program fins occurrence of a char in a string.
- * @author Essa Imhmed
+ * @author Joseph Heifner
  */
 
 public class Match {
