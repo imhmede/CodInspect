@@ -1,7 +1,6 @@
  import java.util.Scanner;
  /**
   * @author Ludwig Scherer
-  
   */
 
 //This program reads, scales, and reverses a sequence of numbers.
