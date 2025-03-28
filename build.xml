@@ -1,7 +1,7 @@
 <project name="CodInspect" basedir="." default="rebuild">
     
     <!-- Properties -->
-    <property name="src.dir" location="src"/>
+    <property name="src.dir" location="Upload_here"/>
     <property name="config.dir" location="config"/>
     <property name="build.dir" location="build"/>
     <property name="reports.dir" location="${build.dir}/test-reports"/>
