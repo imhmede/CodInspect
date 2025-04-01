@@ -1,6 +1,9 @@
 package src;
 import java.util.Scanner;
 
+/**
+ * @author Essa Imhmed
+ */
 public class CardDescription {
 
     /**
