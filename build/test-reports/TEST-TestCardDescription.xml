@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="5" hostname="Essas-MBP.home" name="TestCardDescription" skipped="0" tests="11" time="0.059" timestamp="2025-04-01T04:49:06">
+  <properties>
+    <property name="ant.library.dir" value="/opt/homebrew/Cellar/ant/1.10.15_1/libexec/lib" />
+    <property name="ant.file.type" value="file" />
+    <property name="java.specification.version" value="23" />
+    <property name="ant.project.name" value="CodInspect" />
+    <property name="sun.jnu.encoding" value="UTF-8" />
+    <property name="java.class.path" value="/Users/imhmede/CodInspect/build:/Users/imhmede/CodInspect/Upload_here:/Users/imhmede/CodInspect/config:/Users/imhmede/CodInspect/test:/Users/imhmede/CodInspect/lib/checkstyle-10.20.1-all.jar:/Users/imhmede/CodInspect/lib/hamcrest-2.2.jar:/Users/imhmede/CodInspect/lib/junit-4.13.2.jar:/opt/homebrew/Cellar/ant/1.10.15_1/libexec/lib/ant-launcher.jar:/opt/homebrew/Cellar/ant/1.10.15_1/libexec/lib/ant.jar:/opt/homebrew/Cellar/ant/1.10.15_1/libexec/lib/ant-junit.jar:/opt/homebrew/Cellar/ant/1.10.15_1/libexec/lib/ant-junit4.jar" />
+    <property name="java.vm.vendor" value="Homebrew" />
+    <property name="sun.arch.data.model" value="64" />
+    <property name="java.vendor.url" value="https://github.com/Homebrew/homebrew-core/issues" />
+    <property name="Java.version" value="17" />
+    <property name="java.vm.specification.version" value="23" />
+    <property name="os.name" value="Mac OS X" />
+    <property name="reports.dir" value="/Users/imhmede/CodInspect/build/test-reports" />
+    <property name="ant.file.type.CodInspect" value="file" />
+    <property name="sun.java.launcher" value="SUN_STANDARD" />
+    <property name="user.country" value="US" />
+    <property name="config.dir" value="/Users/imhmede/CodInspect/config" />
+    <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/lib" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner TestCardDescription skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/imhmede/CodInspect/build/test-reports/TEST-TestCardDescription.xml formatter=org.apache.tools.ant.taskdefs.optional.junit.PlainJUnitResultFormatter,/Users/imhmede/CodInspect/build/test-reports/TEST-TestCardDescription.txt crashfile=/Users/imhmede/CodInspect/junitvmwatcher12506961057240279278.properties propsfile=/Users/imhmede/CodInspect/junit7802273065300235534.properties" />
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="jdk.debug" value="release" />
+    <property name="main.class" value="src.Match" />
+    <property name="test.dir" value="/Users/imhmede/CodInspect/test" />
+    <property name="sun.cpu.endian" value="little" />
+    <property name="user.home" value="/Users/imhmede" />
+    <property name="user.language" value="en" />
+    <property name="java.specification.vendor" value="Oracle Corporation" />
+    <property name="java.version.date" value="2025-01-21" />
+    <property name="java.home" value="/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home" />
+    <property name="basedir" value="/Users/imhmede/CodInspect" />
+    <property name="hamcrest.jar" value="/Users/imhmede/CodInspect/lib/hamcrest-2.2.jar" />
+    <property name="file.separator" value="/" />
+    <property name="java.vm.compressedOopsMode" value="Zero based" />
+    <property name="line.separator" value="&#xa;" />
+    <property name="ant.java.version" value="23" />
+    <property name="java.specification.name" value="Java Platform API Specification" />
+    <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+    <property name="apple.awt.application.name" value="JUnitTestRunner" />
+    <property name="ant.file.CodInspect" value="/Users/imhmede/CodInspect/build.xml" />
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers" />
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="java.runtime.version" value="23.0.2" />
+    <property name="user.name" value="imhmede" />
+    <property name="junit.jar" value="/Users/imhmede/CodInspect/lib/junit-4.13.2.jar" />
+    <property name="ant.file" value="/Users/imhmede/CodInspect/build.xml" />
+    <property name="stdout.encoding" value="UTF-8" />
+    <property name="path.separator" value=":" />
+    <property name="os.version" value="13.7.4" />
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+    <property name="file.encoding" value="UTF-8" />
+    <property name="ant.project.invoked-targets" value="rebuild" />
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM" />
+    <property name="java.vendor.version" value="Homebrew" />
+    <property name="build.dir" value="/Users/imhmede/CodInspect/build" />
+    <property name="ant.core.lib" value="/opt/homebrew/Cellar/ant/1.10.15_1/libexec/lib/ant.jar" />
+    <property name="java.vendor.url.bug" value="https://github.com/Homebrew/homebrew-core/issues" />
+    <property name="java.io.tmpdir" value="/var/folders/7s/gych_4ws2853t_wq7tk76knw0000gn/T/" />
+    <property name="checkstyle.failure" value="Got 9 errors and 0 warnings." />
+    <property name="java.version" value="23.0.2" />
+    <property name="user.dir" value="/Users/imhmede/CodInspect" />
+    <property name="os.arch" value="aarch64" />
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+    <property name="ant.home" value="/opt/homebrew/Cellar/ant/1.10.15_1/libexec" />
+    <property name="lib.dir" value="/Users/imhmede/CodInspect/lib" />
+    <property name="native.encoding" value="UTF-8" />
+    <property name="ant.version" value="Apache Ant(TM) version 1.10.15 compiled on August 25 2024" />
+    <property name="java.library.path" value="/Users/imhmede/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:." />
+    <property name="java.vendor" value="Homebrew" />
+    <property name="stderr.encoding" value="UTF-8" />
+    <property name="java.vm.info" value="mixed mode, sharing" />
+    <property name="java.vm.version" value="23.0.2" />
+    <property name="sun.io.unicode.encoding" value="UnicodeBig" />
+    <property name="java.class.version" value="67.0" />
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="src.dir" value="/Users/imhmede/CodInspect/Upload_here" />
+    <property name="ant.project.default-target" value="rebuild" />
+  </properties>
+  <testcase classname="TestCardDescription" name="testGetCardDescription_FiveOfDiamonds" time="0.007">
+    <failure message="expected:&lt;[Five] of Diamonds&gt; but was:&lt;[5] of Diamonds&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;[Five] of Diamonds&gt; but was:&lt;[5] of Diamonds&gt;
+	at TestCardDescription.testGetCardDescription_FiveOfDiamonds(Unknown Source)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+</failure>
+  </testcase>
+  <testcase classname="TestCardDescription" name="testGetCardDescription_InvalidRank" time="0.0">
+    <failure message="expected:&lt;Invalid card rank&gt; but was:&lt;null&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;Invalid card rank&gt; but was:&lt;null&gt;
+	at TestCardDescription.testGetCardDescription_InvalidRank(Unknown Source)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+</failure>
+  </testcase>
+  <testcase classname="TestCardDescription" name="testGetCardDescription_InvalidSuit" time="0.001">
+    <failure message="expected:&lt;Invalid card suit&gt; but was:&lt;null&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;Invalid card suit&gt; but was:&lt;null&gt;
+	at TestCardDescription.testGetCardDescription_InvalidSuit(Unknown Source)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+</failure>
+  </testcase>
+  <testcase classname="TestCardDescription" name="testGetCardDescription_QueenOfHearts" time="0.0" />
+  <testcase classname="TestCardDescription" name="testGetCardDescription_JackOfClubs" time="0.0" />
+  <testcase classname="TestCardDescription" name="testGetCardDescription_AceOfDiamonds" time="0.001" />
+  <testcase classname="TestCardDescription" name="testGetCardDescription_EmptyRank" time="0.0">
+    <failure message="expected:&lt;Invalid card rank&gt; but was:&lt;null&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;Invalid card rank&gt; but was:&lt;null&gt;
+	at TestCardDescription.testGetCardDescription_EmptyRank(Unknown Source)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+</failure>
+  </testcase>
+  <testcase classname="TestCardDescription" name="testGetCardDescription_EmptySuit" time="0.001">
+    <failure message="expected:&lt;Invalid card suit&gt; but was:&lt;null&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;Invalid card suit&gt; but was:&lt;null&gt;
+	at TestCardDescription.testGetCardDescription_EmptySuit(Unknown Source)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+</failure>
+  </testcase>
+  <testcase classname="TestCardDescription" name="testGetCardDescription_KingOfSpades" time="0.0" />
+  <testcase classname="TestCardDescription" name="testGetCardDescription_NullRank" time="0.0" />
+  <testcase classname="TestCardDescription" name="testGetCardDescription_NullSuit" time="0.0" />
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
