@@ -2,77 +2,108 @@ package Upload_here;
 
 import java.util.Scanner;
 
-
- /**
-  * This program reads out Card Notation into a Card Description
-  * @author Joseph Heifner
-  */
+/**
+ * This program will accept card description notation and return the full name of the rank and suit
+ * @author Sam Hodges
+ * @date 2025-03-24 
+ */
 public class CardDescription {
-    
-    /**
-     * This method checks a value from the user and prints a description of the values into a string
-     * @param rank a string representing the value of the card
-     * @param suit a string representing the suit of the card
-     * @return a string expressing whether the input value is valid or not
+
+     /**
+     * This method accepts two arguments and returns a verbose description of the card rank and suit
+     * @param rank a string depicting card rank
+     * @param suit a string depicting one of the four card suits
      */
     public static String getCardDescription(String rank, String suit) {
-
-        if (!(rank.equals("A") || rank.equals("J") || rank.equals("Q") || rank.equals("K"))){ //check if the rank is valid
-            if (Integer.parseInt(rank) < 2 || Integer.parseInt(rank) > 10)
-                {
-                return "Invalid Input";
-                }
-        }
-        if (!(suit.equals("D") || suit.equals("H") || suit.equals("S") || suit.equals("C"))){ //check if the suit is valid
-            return "Invalid Input";
-        }
-
-        //now find the matching rank to it's description
-        if (rank.equals("A")){
-            System.out.print("Ace of ");
-        }
-        else if (rank.equals("J")){
-            System.out.print("Jack of ");
-        }
-        else if (rank.equals("Q")){
-            System.out.print("Queen of ");
-        }
-        else if (rank.equals("K")){
-            System.out.print("King of ");
-        }
-        else {
-            System.out.print(rank + " of ");
-        }
+        String description;
+        String fullRank = "";
+        String fullSuit = "";
         
-        //now find the matching suit
-        if (suit.equals("D")){
-            System.out.print("Diamonds");
+        if(rank.equals("A")){
+            fullRank = "Ace";
+        }else if(rank.equals("K")){
+            fullRank = "King";
+        }else if(rank.equals("Q")){
+            fullRank = "Queen";
+        }else if(rank.equals("J")){
+            fullRank = "Jack";
+        }else if(rank.equals("1")){
+            fullRank = "1";
+        }else if(rank.equals("2")){
+            fullRank = "2";
+        }else if(rank.equals("3")){
+            fullRank = "3";
+        }else if(rank.equals("4")){
+            fullRank = "4";
+        }else if(rank.equals("5")){
+            fullRank = "5";
+        }else if(rank.equals("6")){
+            fullRank = "6";
+        }else if(rank.equals("7")){
+            fullRank = "7";
+        }else if(rank.equals("8")){
+            fullRank = "8";
+        }else if(rank.equals("9")){
+            fullRank = "9";
+        }else if(rank.equals("10")){
+            fullRank = "10";            
         }
-        else if (suit.equals("H")){
-            System.out.print("Hearts");
+
+        if(suit.equals("H")){
+            fullSuit = "Hearts";
+        }else if(suit.equals("D")){
+            fullSuit = "Diamonds";            
+        }else if(suit.equals("C")){
+            fullSuit = "Clubs";       
+        }else if(suit.equals("S")){
+            fullSuit = "Spades";     
         }
-        else if (suit.equals("S")){
-            System.out.print("Spades");
-        }
-        else {
-            System.out.print("Clubs");
-        }
-        return "";
+
+        //concatenate the rank and suit and make them pretty
+        description = fullRank + " of " + fullSuit;
+        return description; 
     }
-    
+
+
     /**
-     * This is the main method.
-     * @param args a command-line argument
-     */
-    public static void main(String [] args) {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Enter the notation for card: ");
-        String card = in.next();
-        String rank = card.substring(0,card.length() - 1);
-        String suit = card.substring(card.length() -1);
+     * This is the main method
+     * @param args a list of possible arguments passed by the user
+    */
+    public static void main(String[] args) { 
+        String suit = "";
+        String rank = "";
+        String suitContents = "SHCD";  //the four valid suits
+        String rankContents ="AKQJ12345678910";  //the valid card ranks
+        String description = "";
 
-        System.out.print(getCardDescription(rank, suit));
-        in.close();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the one character card suit (S for spades, H for hearts, C for clubs, D for diamonds): ");
+        suit = scanner.nextLine();
+
+        // here is some error checking to ensure I get an expected value for the card suit
+        if(!suitContents.contains(suit)){
+            System.out.println("Entry error - please only enter the one character card suit (S for spades, H for hearts, C for clubs, D for diamonds.");
+            scanner.close();
+            System.exit(0);
+        }else{
+        
+            System.out.print("Enter the one character rank (A, K, Q, J, 2-10 for numeric cards): ");
+            rank = scanner.nextLine();
+
+            // here is some error checking to ensure I get an expected value for the card rank
+            if(!rankContents.contains(rank)){
+                System.out.println("Entry error - please only enter the one character rank (A, K, Q, J, 2-10 for numeric cards).");
+                scanner.close();
+                System.exit(0);
+            }
+        }
+        scanner.close();
+
+        description = getCardDescription(rank, suit);
+        System.out.println(description);
+    
     }
-
+ 
 }
+
