@@ -1,70 +1,111 @@
+
+package Upload_here;
+import java.util.Scanner;
+
 /**
- * This program takes the shorthand rank and suit of a card and returns the full name of the card.
- * The ranks are 2-10, J, Q, K, A and the suits are C, D, H, S.
- * The program uses recursion to repeatedly ask for valid input if the user provides invalid shorthand.
- * @author Raul Sena
+ * This program will accept card description notation and return the full name of the rank and suit
+ * @author Samuel Hodges
+ * @date 2025-03-24 
  */
 
- package Upload_here;
 
- import java.util.*;
+public class CardDescription {
 
- public class CardDescription {
- 
      /**
-      * This method takes the shorthand rank and suit of a card and returns the full name of the card.
-      * Recursion is used to re-prompt the user for valid input when invalid input is detected.
-      * @param rank the shorthand rank of the card
-      * @param suit the shorthand suit of the card
-      * @return the full name of the card
-      */
-     public static String getCardDescription(String rank, String suit) {
-         String ranks = "2345678910JQKA";
-         String suits = "CDHS";
-         
-         // Handle invalid inputs recursively
-         int rankIndex = ranks.indexOf(rank);
-         int suitIndex = suits.indexOf(suit);
-         
-         if (rankIndex == -1 || suitIndex == -1) {
-             System.out.println("Invalid card. Please try again.");
-             
-             // Recursively call the main method to re-prompt the user
-             main(null); 
-             
-             return "";
-         }
-         
-         // Arrays to hold the full card names
-         String[] rankNames = {"Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", 
-                               "Ten", "Jack", "Queen", "King", "Ace"};
-         String[] suitNames = {"Clubs", "Diamonds", "Hearts", "Spades"};
-         
-         return rankNames[rankIndex] + " of " + suitNames[suitIndex];
-     }
+     * This method accepts two arguments and returns a verbose description of the card rank and suit
+     * @param rank a string depicting card rank
+     * @param suit a string depicting one of the four card suits
+     */
+    public static String getCardDescription(String rank, String suit) {
+        String description;
+        String fullRank = "";
+        String fullSuit = "";
+        
+        if(rank.equals("A")){
+            fullRank = "Ace";
+        }else if(rank.equals("K")){
+            fullRank = "King";
+        }else if(rank.equals("Q")){
+            fullRank = "Queen";
+        }else if(rank.equals("J")){
+            fullRank = "Jack";
+        }else if(rank.equals("1")){
+            fullRank = "1";
+        }else if(rank.equals("2")){
+            fullRank = "2";
+        }else if(rank.equals("3")){
+            fullRank = "3";
+        }else if(rank.equals("4")){
+            fullRank = "4";
+        }else if(rank.equals("5")){
+            fullRank = "5";
+        }else if(rank.equals("6")){
+            fullRank = "6";
+        }else if(rank.equals("7")){
+            fullRank = "7";
+        }else if(rank.equals("8")){
+            fullRank = "8";
+        }else if(rank.equals("9")){
+            fullRank = "9";
+        }else if(rank.equals("10")){
+            fullRank = "10";            
+        }
+
+        if(suit.equals("H")){
+            fullSuit = "Hearts";
+        }else if(suit.equals("D")){
+            fullSuit = "Diamonds";            
+        }else if(suit.equals("C")){
+            fullSuit = "Clubs";       
+        }else if(suit.equals("S")){
+            fullSuit = "Spades";     
+        }
+
+        //concatenate the rank and suit and make them pretty
+        description = fullRank + " of " + fullSuit;
+        return description; 
+    }
+
+
+    /**
+     * This is the main method
+     * @param args a list of possible arguments passed by the user
+    */
+    public static void main(String[] args) { 
+        String suit = "";
+        String rank = "";
+        String suitContents = "SHCD";  //the four valid suits
+        String rankContents ="AKQJ12345678910";  //the valid card ranks
+        String description = "";
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the one character card suit (S for spades, H for hearts, C for clubs, D for diamonds): ");
+        suit = scanner.nextLine();
+
+        // here is some error checking to ensure I get an expected value for the card suit
+        if(!suitContents.contains(suit)){
+            System.out.println("Entry error - please only enter the one character card suit (S for spades, H for hearts, C for clubs, D for diamonds.");
+            scanner.close();
+            System.exit(0);
+        }else{
+        
+            System.out.print("Enter the one character rank (A, K, Q, J, 2-10 for numeric cards): ");
+            rank = scanner.nextLine();
+
+            // here is some error checking to ensure I get an expected value for the card rank
+            if(!rankContents.contains(rank)){
+                System.out.println("Entry error - please only enter the one character rank (A, K, Q, J, 2-10 for numeric cards).");
+                scanner.close();
+                System.exit(0);
+            }
+        }
+        scanner.close();
+
+        description = getCardDescription(rank, suit);
+        System.out.println(description);
+    
+    }
  
-     /**
-      * This is the main method that handles input and prints the card description.
-      * It uses recursion to re-prompt the user for an input if an invalid input is detected.
-      * @param args
-      */
-     public static void main(String[] args) {
-         Scanner in = new Scanner(System.in);
-         
-         System.out.println("Enter the shorthand rank of the card: ");
-         String rank = in.nextLine().toUpperCase();
-         
-         System.out.println("Enter the shorthand suit of the card: ");
-         String suit = in.nextLine().toUpperCase();
-         
-         // Display the card description or recursively re-prompt
-         String result = getCardDescription(rank, suit);
-         
-         if (!result.isEmpty()) {
-             System.out.println(result);
-         }
-         
-         in.close();
-     }
- }
- 
+}
+
