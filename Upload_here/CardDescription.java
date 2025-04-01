@@ -5,7 +5,7 @@ import java.util.Scanner;
 /**
  * This program gives a card description based on shorthand notation.
  * Example: QS is Queen of Spades
- * @author Angel Uriel Garcia Vega 
+ * @author Angel GarciaVega 
  * @date March 26th 2025
  */
 public class CardDescription {
