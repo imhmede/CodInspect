@@ -1,90 +1,70 @@
 /**
- * @author Nicol Salaris
- * CS123
- * ID: 660288257
+ * This program takes the shorthand rank and suit of a card and returns the full name of the card.
+ * The ranks are 2-10, J, Q, K, A and the suits are C, D, H, S.
+ * The program uses recursion to repeatedly ask for valid input if the user provides invalid shorthand.
+ * @author Raul Sena
  */
-package Upload_here;
 
-import java.util.Scanner;
-public class CardDescription{
-    //asking the user for input for card to get the rank and suit
-    public static void main(String[] args) {
-        Scanner in =new Scanner(System.in);
-        System.out.println("Enter the rank of the card");
-        String rank= in.next();
-        System.out.println("Enter the suit of the card");
-        String suit= in.next();
-        suit = suit.toUpperCase();
-        rank = rank.toUpperCase();
-        System.out.println(getCardDescription(rank,suit));
-    }
-    /*
-     * @ param rank: the rank of the card
-     * @ param suit: the suit of the card
-     * @ return: the description of the card
-     * This method takes the rank and suit of a card and returns the description of the card
-     * 
-     */
-    public static String getCardDescription(String rank, String suit) {
-        String card="";
-        if(rank.equals("A")){
-            card+="Ace";
-        }
-        else if(rank.equals("2")){
-            card+="Two";
-        }
-        else if(rank.equals("3")){
-            card+="Three";
-        }
-        else if(rank.equals("4")){
-            card+="Four";
-        }
-        else if(rank.equals("5")){
-            card+="Five";
-        }
-        else if(rank.equals("6")){
-            card+="Six";
-        }
-        else if(rank.equals("7")){
-            card+="Seven";
-        }
-        else if(rank.equals("8")){
-            card+="Eight";
-        }
-        else if(rank.equals("9")){
-            card+="Nine";
-        }
-        else if(rank.equals("10")){
-            card+="Ten";
-        }
-        else if(rank.equals("J")){
-            card+="Jack";
-        }
-        else if(rank.equals("Q")){
-            card+="Queen";
-        }
-        else if(rank.equals("K")){
-            card+="King";
-        }
-        else{
-            return "Invalid Rank";
-        }
-        card+=" of ";
-        if(suit.equals("D")){
-            card+="Diamonds";
-        }
-        else if(suit.equals("H")){
-            card+="Hearts";
-        }
-        else if(suit.equals("S")){
-            card+="Spades";
-        }
-        else if(suit.equals("C")){
-            card+="Clubs";
-        }
-        else{
-            return "Invalid Suit";
-        }
-        return card;
-    }
-}
+ package Upload_here;
+
+ import java.util.*;
+
+ public class CardDescription {
+ 
+     /**
+      * This method takes the shorthand rank and suit of a card and returns the full name of the card.
+      * Recursion is used to re-prompt the user for valid input when invalid input is detected.
+      * @param rank the shorthand rank of the card
+      * @param suit the shorthand suit of the card
+      * @return the full name of the card
+      */
+     public static String getCardDescription(String rank, String suit) {
+         String ranks = "2345678910JQKA";
+         String suits = "CDHS";
+         
+         // Handle invalid inputs recursively
+         int rankIndex = ranks.indexOf(rank);
+         int suitIndex = suits.indexOf(suit);
+         
+         if (rankIndex == -1 || suitIndex == -1) {
+             System.out.println("Invalid card. Please try again.");
+             
+             // Recursively call the main method to re-prompt the user
+             main(null); 
+             
+             return "";
+         }
+         
+         // Arrays to hold the full card names
+         String[] rankNames = {"Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", 
+                               "Ten", "Jack", "Queen", "King", "Ace"};
+         String[] suitNames = {"Clubs", "Diamonds", "Hearts", "Spades"};
+         
+         return rankNames[rankIndex] + " of " + suitNames[suitIndex];
+     }
+ 
+     /**
+      * This is the main method that handles input and prints the card description.
+      * It uses recursion to re-prompt the user for an input if an invalid input is detected.
+      * @param args
+      */
+     public static void main(String[] args) {
+         Scanner in = new Scanner(System.in);
+         
+         System.out.println("Enter the shorthand rank of the card: ");
+         String rank = in.nextLine().toUpperCase();
+         
+         System.out.println("Enter the shorthand suit of the card: ");
+         String suit = in.nextLine().toUpperCase();
+         
+         // Display the card description or recursively re-prompt
+         String result = getCardDescription(rank, suit);
+         
+         if (!result.isEmpty()) {
+             System.out.println(result);
+         }
+         
+         in.close();
+     }
+ }
+ 
