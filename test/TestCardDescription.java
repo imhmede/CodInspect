@@ -2,7 +2,7 @@
 import org.junit.*;
 import java.util.Scanner;
 
-import src.CardDescription;
+import Upload_here.CardDescription;
 
 
 public class TestCardDescription {

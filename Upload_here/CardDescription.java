@@ -1,93 +1,73 @@
-package src;
+package Upload_here;
 import java.util.Scanner;
 
 /**
- * @author Essa Imhmed
+ * This program takes Shorthand string values from user and if the user properly enters the values then the program will
+ * describe the card. Uses the standard 52 card deck of playing cards as a reference.
+ * @author David Burns
+ * @date March 22nd, 2025.
  */
+
 public class CardDescription {
-
-    /**
-     * Converts shorthand notation of a card rank and suit into its full description.
-     *
-     * @param rank The rank of the card (A, 2-10, J, Q, K)
-     * @param suit The suit of the card (D, H, S, C)
-     * @return The full description of the card (e.g., "Queen of Spades")
+    /*
+     * This main method used Scanner class to take input from the user, rank and suit, and sends that information to the method getCardDescription
+     * whose return value is printed with a println call.
      */
-    public String getCardDescription(String rank, String suit) {
-        String rankDescription = "";
-        String suitDescription = "";
-
-        // Determine rank description
-        if (rank.equals("A")) {
-            rankDescription = "Ace";
-        } else if (rank.equals("J")) {
-            rankDescription = "Jack";
-        } else if (rank.equals("Q")) {
-            rankDescription = "Queen";
-        } else if (rank.equals("K")) {
-            rankDescription = "King";
-        } else {
-            try {
-                int num = Integer.parseInt(rank);
-                if (num >= 2 && num <= 10) {
-                    rankDescription = rank;
-                } else {
-                    return "Invalid card rank";
-                }
-            } catch (NumberFormatException e) {
-                return "Invalid card rank";
-            }
-        }
-
-        // Determine suit description
-        switch (suit) {
-            case "D":
-                suitDescription = "Diamonds";
-                break;
-            case "H":
-                suitDescription = "Hearts";
-                break;
-            case "S":
-                suitDescription = "Spades";
-                break;
-            case "C":
-                suitDescription = "Clubs";
-                break;
-            default:
-                return "Invalid card suit";
-        }
-
-        return rankDescription + " of " + suitDescription;
-    }
-
     public static void main(String[] args) {
-        CardDescription cardDescription = new CardDescription();
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            System.out.print("Enter card notation (e.g., QS, 10H) or 'exit' to quit: ");
-            String notation = scanner.next().toUpperCase().trim();
+        String rank, suit;
+        Scanner in = new Scanner(System.in);
 
-            if (notation.equals("EXIT")) {
-                break;
-            }
+        // collecting inputs from user
+        System.out.println("Enter in the Card Rank using one character (EXAMPLE: 'A' = ACE (or) '4' = FOUR). \n");
+        rank =  in.next();
+        System.out.println("Enter in the Card Suit using one character (EXAMPLE: 'H' = HEARTS (or) 'S' = SPADES). \n");
+        suit =  in.next();
 
-            String rank, suit;
-
-            // Validate input length
-            if (notation.length() == 2) {
-                rank = notation.substring(0, 1);
-                suit = notation.substring(1, 2);
-            } else if (notation.length() == 3 && notation.startsWith("10")) {
-                rank = "10";
-                suit = notation.substring(2, 3);
-            } else {
-                System.out.println("Invalid input! Please enter a valid card notation.\n");
-                continue;
-            }
-
-            System.out.println(cardDescription.getCardDescription(rank, suit) + "\n");
+        // print the return value of getCardDescription
+        System.out.println(getCardDescription(rank, suit));
+        // close the scanner
+        in.close();
+        
         }
-
-        scanner.close();
+    /*
+     * This method iterates through arrays and uses nested loops to find out if user input matches the related items in the arrays
+     * if it does then the method uses the concurring index values to pull information from other correlated arrays of the same size based on user inputs.
+     * If the method finds matching values in both loops then it will exit the iterations and return the concatenated string descriptions as one description.
+     * for printing in the main method.
+     * 
+     * if no matching values are found within the iterated arrays and all loops complete then an error message is instead returned for printing in the main method.
+     * 
+     * @param rank = The string value entered by user representing the RANK
+     * @param suit = The string value entered by user representing the SUIT
+     */
+    public static String getCardDescription(String rank, String suit) 
+        {
+        String description;
+        // arrays for comparison through iteration
+        String[] suits= {"H","S","C","D"};
+        String[] ranks= {"A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"};
+        
+        // arrays whose indexed values correlate appropriately with indexes above. (used when matching values are found.)
+        String[] suitDescripts= {"Hearts", "Spades", "Clubs", "Diamonds"};
+        String[] rankDescripts= {"Ace", "King", "Queen", "Jack", "Ten", "Nine", "Eight", "Seven", "Six", "Five", "Four", "Three", "Two"};
+    
+        for(int i = 0; i<suits.length; i++)
+        {
+            if (suits[i].equals(suit)) // search through the suits array to compare each item with the arguement (suit) which is the (string) users input.
+            {
+                for(int j = 0; j<ranks.length; j++)// if a matching suit is found it will open a new loop to check for rank.
+                {
+                    if (ranks[j].equals(rank)) // search through the ranks array to compare each item with the arguement (rank) which is the (string) users input.
+                    {
+                        // execute a concatenation of strings for the return value and exit the method.
+                        description = rankDescripts[j] + " Of " + suitDescripts[i];
+                        return description;
+                    }
+                }
+            }
+        }
+        // Return an error if all for loops complete themselves because one matching comparison is not made.
+        description = "Invalid Shorthand Value";
+        return description;
     }
 }
