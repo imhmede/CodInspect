@@ -4,6 +4,7 @@ import java.util.Scanner;
  * @author Ludwig Scherer
  */
 
+
 public class CardDescription {
 
     /**
