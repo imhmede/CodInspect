@@ -433,31 +433,31 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
     return pmd_lines, final_score, total_weighted_error_density
 
 def get_adjusted_penalty(violation_level, count, lines_of_code, tool_name):
-    try:
-        with open (grading_config_path, "r") as file:
-            data = json.load(file)
-            weights = data.get("weights", {}).get(tool_name, {})
-        
-        adjusted_pen, absolute_pen = 0, 0
-        
-        if violation_level in weights:
-            absolute_pen = weights[violation_level] * count
-            print(f"absolute_pen for {tool_name}, {violation_level}: {absolute_pen}\n"
-                  f"abs_pen = {weights[violation_level]} * {count}\n")
-        else:
-            print(f"Error calculating penalty for {tool_name}, {violation_level}")
-            return 0
-        
-        if lines_of_code == 0:
-            return 0
-        
-        weighted_error_density = absolute_pen / lines_of_code
-        error_density = count / lines_of_code
-        adjusted_pen = absolute_pen * error_density
-            
-    except Exception as e:
-        print(f"Error while opening weights JSON file. ERROR: {e}")
+    # try:
+    with open (grading_config_path, "r") as file:
+        data = json.load(file)
+        weights = data.get("weights", {}).get(tool_name, {})
+    
+    adjusted_pen, absolute_pen = 0, 0
+    print(weights)
+    if violation_level in weights:
+        absolute_pen = weights[violation_level] * count
+        print(f"absolute_pen for {tool_name}, {violation_level}: {absolute_pen}\n"
+                f"abs_pen = {weights[violation_level]} * {count}\n")
+    else:
+        print(f"Error calculating penalty for {tool_name}, {violation_level}")
         return 0
+    
+    if lines_of_code == 0:
+        return 0
+    
+    weighted_error_density = absolute_pen / lines_of_code
+    error_density = count / lines_of_code
+    adjusted_pen = absolute_pen * error_density
+            
+    # except Exception as e:
+    #     print(f"Error while opening weights JSON file. ERROR: {e}")
+    #     return 0
     
     return adjusted_pen, weighted_error_density     
  
