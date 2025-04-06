@@ -3,7 +3,9 @@ import xml.etree.ElementTree as ET
 import json
 import os
 import pandas as pd
+import subprocess
 from scipy.stats import percentileofscore
+
 
 def parse_checkstyle(xml_file_path):
     try:
@@ -127,11 +129,25 @@ def parse_test_results(test_file_path):
         print(f"Failed to parse test results: {e}")
         return {}
 def create_json_output(student_name, check_date, checkstyle_errors, pmd_violations, test_results):
+
+    # Count LOC but ignore white space
+    #command = r"grep -v '^\s*$' ../Upload_here/*.java | wc -l"
+    
+    # Count LOC but ignore white space and comments
+    command = r"grep -v '^\s*$' ../Upload_here/*.java | grep -v '^\s*//' | grep -v '^\s*/\*' | grep -v '^\s*\*' | grep -v '^\s*\*/' | wc -l"
+    
+    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    
+    loc = 100
+    
+    if result.returncode == 0:
+        loc = int(result.stdout.strip())
+
     # Combine Checkstyle and PMD violations into a single structure
     output = {
         "System": student_name,
         "checkDate": check_date,
-        "linesOfCode": 493, # ------------------- NEED THIS DYNAMICALLY ---------------------
+        "linesOfCode": loc, # ------------------- NEED THIS DYNAMICALLY ---------------------
         "violations": {
             "checkstyle": checkstyle_errors,
             "pmd": pmd_violations,
