@@ -10,11 +10,11 @@ def parse_checkstyle(xml_file_path):
         tree = ET.parse(xml_file_path)  # Parse the XML file
         root = tree.getroot()  # Get the root element
         errors = []
-
+ 
         # Extract file name from the 'file' element in the XML
         for file_element in root.findall('file'):
             file_name = file_element.attrib['name']  # Get the 'name' attribute of the <file> element
-
+ 
             for error in file_element.findall('error'):
                 errors.append({
                     'file': file_name,  # Add the file name to the error
@@ -23,21 +23,19 @@ def parse_checkstyle(xml_file_path):
                     'message': error.attrib['message'],
                     'source': error.attrib['source']
                 })
-        print("CheckStyle xml successfully parsed")
         return errors
     except Exception as e:
         print(f"Failed to parse XML: {e}")
         return []
-
+ 
+ 
 def parse_pmd(xml_file_path):
     try:
         # Parse the XML file
         tree = ET.parse(xml_file_path)
         root = tree.getroot()
-        
         # Define the namespace for PMD
         namespace = {'pmd': 'http://pmd.sourceforge.net/report/2.0.0'}
-        
         # Extract information about violations
         violations = []
         for file_element in root.findall('pmd:file', namespace):
@@ -58,17 +56,17 @@ def parse_pmd(xml_file_path):
                     'message': violation.text.strip() if violation.text else '',
                     'externalInfoUrl': violation.get('externalInfoUrl')
                 })
-        print("PMD xml successfully parsed")
         return violations
     except Exception as e:
         print(f"Failed to parse PMD XML: {e}")
         return []
-
+ 
+ 
 def parse_test_results(test_file_path):
     try:
         with open(test_file_path, 'r') as file:
             lines = file.readlines()
-
+ 
         # Initialize structure
         result = {
             "testSuite": "",
@@ -81,9 +79,9 @@ def parse_test_results(test_file_path):
             },
             "testCases": []
         }
-
+ 
         current_test_case = None
-
+ 
         # Parse the file line by line
         for line in lines:
             line = line.strip()
@@ -118,23 +116,21 @@ def parse_test_results(test_file_path):
                 if "stackTrace" not in current_test_case["failureDetails"]:
                     current_test_case["failureDetails"]["stackTrace"] = []
                 current_test_case["failureDetails"]["stackTrace"].append(line.strip())
-
+ 
         # Add the last test case if exists
         if current_test_case:
             result["testCases"].append(current_test_case)
-
+ 
         return result
-
+ 
     except Exception as e:
         print(f"Failed to parse test results: {e}")
         return {}
-
 def create_json_output(student_name, check_date, checkstyle_errors, pmd_violations, test_results):
     # Combine Checkstyle and PMD violations into a single structure
     output = {
-        "studentName": student_name,
+        "System": student_name,
         "checkDate": check_date,
-        "linesOfCode": 493, # hard coded, need dynamic handling
         "violations": {
             "checkstyle": checkstyle_errors,
             "pmd": pmd_violations,
@@ -142,41 +138,80 @@ def create_json_output(student_name, check_date, checkstyle_errors, pmd_violatio
         }
     }
     return output
-
+ 
+ 
 # Define the paths to the XML files
 checkstyle_file_path = 'build/test-reports/checkstyle-result.xml'
 pmd_file_path = 'build/test-reports/pmd.xml'
-test_file_path = "build/test-reports/TEST-TestCases.txt"
-
+ 
+# Directories
+test_dir = "test"
+reports_dir = "build/test-reports"
+ 
+# Ensure the reports directory exists
+os.makedirs(reports_dir, exist_ok=True)
+ 
+# Get the first (and only) file in the test directory
+test_files = os.listdir(test_dir)
+if not test_files:
+    print("No test file found in the 'test' directory.")
+    exit(1)  # Exit with an error if no file exists
+ 
+test_file = test_files[0]  # Since there's only one file
+file_name, _ = os.path.splitext(test_file)  # Extract filename without extension
+ 
+# Construct the new report filename
+new_filename = f"TEST-{file_name}.txt"
+test_file_path = os.path.join(reports_dir, new_filename)
+ 
+#test_file_path = "build/test-reports/TEST-TestCases.txt"
+print("test_file_path: ", test_file_path)
+ 
 # Parse the Checkstyle XML file
 checkstyle_errors = parse_checkstyle(checkstyle_file_path)
-
+ 
+# Print the parsed Checkstyle errors to the console
+if checkstyle_errors:
+    print("Checkstyle Errors:")
+    for error in checkstyle_errors:
+        print(f"File: {error['file']}, Line: {error['line']}, Severity: {error['severity']}, Message: {error['message']}, Source: {error['source']}")
+else:
+    print("No Checkstyle errors found or failed to parse the file.")
+ 
 # Parse the PMD XML file
 pmd_violations = parse_pmd(pmd_file_path)
-
+ 
+# Print the parsed PMD violations to the console
+if pmd_violations:
+    print("\\nPMD Violations:")
+    for violation in pmd_violations:
+        print(f"File: {violation['file']}, Line: {violation['beginline']}, Rule: {violation['rule']}, Message: {violation['message']}, URL: {violation['externalInfoUrl']}")
+else:
+    print("\\nNo PMD violations found or failed to parse the file.")
+ 
 test_results = parse_test_results(test_file_path)
-
+ 
 # Define metadata
-student_name = "John Cook"
-
+student_name = "CodeInspector"
+ 
 # Get the current date and time
 current_datetime = datetime.now()
 check_date = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")  # Format to avoid invalid characters in file names
-
+ 
 # Generate the JSON output
 output_json = create_json_output(student_name, check_date, checkstyle_errors, pmd_violations, test_results)
-
+ 
 # Create the output directory if it doesn't exist
 output_dir = "build/test-reports/"
 os.makedirs(output_dir, exist_ok=True)
-
+ 
 # Create a dynamic output file name
-output_file_path = os.path.join(output_dir, f"violations_{check_date}.json")
-
+output_file_path = os.path.join(output_dir, f"violations.json")
+ 
 # Save the JSON output to the file
 with open(output_file_path, 'w') as json_file:
     json.dump(output_json, json_file, indent=4)
-
+ 
 print(f"JSON output saved to {output_file_path}")
 
 grade_report_dir = "build/grade-reports/"
