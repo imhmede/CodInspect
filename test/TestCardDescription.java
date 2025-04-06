@@ -2,8 +2,6 @@
 import org.junit.*;
 import java.util.Scanner;
 
-import Upload_here.CardDescription;
-
 
 public class TestCardDescription {
 
