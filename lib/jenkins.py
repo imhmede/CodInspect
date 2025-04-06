@@ -131,10 +131,10 @@ def parse_test_results(test_file_path):
 def create_json_output(student_name, check_date, checkstyle_errors, pmd_violations, test_results):
 
     # Count LOC but ignore white space
-    #command = r"grep -v '^\s*$' ../Upload_here/*.java | wc -l"
+    command = r"grep -v '^\s*$' ../Upload_here/*.java | wc -l"
     
     # Count LOC but ignore white space and comments
-    command = r"grep -v '^\s*$' ../Upload_here/*.java | grep -v '^\s*//' | grep -v '^\s*/\*' | grep -v '^\s*\*' | grep -v '^\s*\*/' | wc -l"
+    #command = r"grep -v '^\s*$' ../Upload_here/*.java | grep -v '^\s*//' | grep -v '^\s*/\*' | grep -v '^\s*\*' | grep -v '^\s*\*/' | wc -l"
     
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     
@@ -147,7 +147,7 @@ def create_json_output(student_name, check_date, checkstyle_errors, pmd_violatio
     output = {
         "System": student_name,
         "checkDate": check_date,
-        "linesOfCode": loc, # ------------------- NEED THIS DYNAMICALLY ---------------------
+        "linesOfCode": 493, # ------------------- NEED THIS DYNAMICALLY ---------------------
         "violations": {
             "checkstyle": checkstyle_errors,
             "pmd": pmd_violations,
