@@ -23,7 +23,7 @@ def parse_checkstyle(xml_file_path):
                     'message': error.attrib['message'],
                     'source': error.attrib['source']
                 })
-                
+        print("CheckStyle xml successfully parsed")
         return errors
     except Exception as e:
         print(f"Failed to parse XML: {e}")
@@ -58,6 +58,7 @@ def parse_pmd(xml_file_path):
                     'message': violation.text.strip() if violation.text else '',
                     'externalInfoUrl': violation.get('externalInfoUrl')
                 })
+        print("PMD xml successfully parsed")
         return violations
     except Exception as e:
         print(f"Failed to parse PMD XML: {e}")
