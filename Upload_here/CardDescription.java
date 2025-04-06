@@ -1,7 +1,5 @@
 import java.util.Scanner;
 
-
-
 /**
  * @author Ludwig Scherer
  */
