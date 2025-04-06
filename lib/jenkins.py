@@ -131,7 +131,7 @@ def parse_test_results(test_file_path):
 def create_json_output(student_name, check_date, checkstyle_errors, pmd_violations, test_results):
 
     # Count LOC but ignore white space
-    command = r"grep -v '^\s*$' /Upload_here/*.java | wc -l"
+    command = r"grep -v '^\s*$' Upload_here/*.java | wc -l"
     
     # Count LOC but ignore white space and comments
     #command = r"grep -v '^\s*$' ../Upload_here/*.java | grep -v '^\s*//' | grep -v '^\s*/\*' | grep -v '^\s*\*' | grep -v '^\s*\*/' | wc -l"
