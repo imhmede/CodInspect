@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 /**
- * @author Essa Imhmed
+ * @author Ludwig Scherer
  */
 
 public class CardDescription {
