@@ -142,7 +142,8 @@ def create_json_output(student_name, check_date, checkstyle_errors, pmd_violatio
     
     if result.returncode == 0:
         loc = int(result.stdout.strip())
-
+    
+    print("LOC: ", loc)
     # Combine Checkstyle and PMD violations into a single structure
     output = {
         "System": student_name,
