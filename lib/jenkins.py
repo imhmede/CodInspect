@@ -139,7 +139,8 @@ def create_json_output(student_name, check_date, checkstyle_errors, pmd_violatio
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     
     loc = 100
-    
+    current_dir = os.getcwd()
+    print("Current directory:", current_dir)
     if result.returncode == 0:
         loc = int(result.stdout.strip())
     
