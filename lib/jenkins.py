@@ -152,7 +152,7 @@ def create_json_output(student_name, check_date, checkstyle_errors, pmd_violatio
     output = {
         "System": student_name,
         "checkDate": check_date,
-        "linesOfCode": loc, # ------------------- NEED THIS DYNAMICALLY ---------------------
+        "linesOfCode": loc,
         "violations": {
             "checkstyle": checkstyle_errors,
             "pmd": pmd_violations,
@@ -236,6 +236,10 @@ with open(output_file_path, 'w') as json_file:
  
 print(f"JSON output saved to {output_file_path}")
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ================================= Grade Report Creation Starts Here =====================================
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 grade_report_dir = "build/grade-reports/"
 grading_config_path = "lib/grading_config.json"
 os.makedirs(grade_report_dir, exist_ok=True)
@@ -245,21 +249,34 @@ grade_report_file_path = os.path.join(grade_report_dir, f"{check_date}.txt")
 
 # process checkstyle violations
 def process_checkstyle_violations(checkstyle_violations):
+    """This method takes the checkstyle violation list read from the JSON file, processes it and stores 
+    it in a nested dictionary so that we can access specific values more easily. 
+    
+    The dictionary structure is described in generate_checkStyle_output()
+
+    Args:
+        pmd_violations (list): the checkstyle violation list
+
+    Returns:
+        dictionary: the dicitonary containing the formatted / processed checkstyle violation data
+    """
     processed_checkstyle_violations = {}
         
     for violation in checkstyle_violations:
-        file = violation.get("file") # get the filepath of the file where the error was detected
+        file = violation.get("file") # get the filepath of the file where the violation was detected
         
-        # split the string to get the second do last part, i.e the error catrgory
+        # split the string to get the second to last part, i.e the violation category
         category = violation.get("source").rsplit(".", 2)[-2]
-        # split the string to get the last part, i.e the error type
+        # split the string to get the last part, i.e the specific violation type
         type = violation.get("source").rsplit(".", 1)[-1] 
         severity = violation.get("severity")
          
-        # this next block simply aims to increase the counter of the found error type, which is stored 
-        # inside a three-times nested dictionary.
+        # this next block simply aims to increase the counter of the found violation type, which is stored 
+        # inside a nested dictionary.
         
-        # make sure the file exists in the dictionary and set up the desired severity order
+        # make sure the file exists in the dictionary and set up the desired severity order 
+        # (the order is relvant for the report cration later on, because the lines for the .txt file are 
+        # created in the order in which the severities are encountered inside the dictionary)
         if file not in processed_checkstyle_violations:
             processed_checkstyle_violations[file] = {
                 "info": {},
@@ -271,7 +288,7 @@ def process_checkstyle_violations(checkstyle_violations):
         if category not in processed_checkstyle_violations[file][severity]:
             processed_checkstyle_violations[file][severity][category] = {}
 
-        # make sure the error type counter or initialize it with 1
+        # make sure the violation type counter or initialize it with 1
         if type in processed_checkstyle_violations[file][severity][category]:
             processed_checkstyle_violations[file][severity][category][type] += 1
         else:
@@ -280,6 +297,17 @@ def process_checkstyle_violations(checkstyle_violations):
             
 # process pmd violations            
 def process_pmd_violations(pmd_violations):
+    """This method takes the pmd violation list read from the JSON file, processes it and stores it in
+    a nested dictionary so that we can access specific values more easily. 
+    
+    The dictionary structure is described in generate_checkStyle_output()
+
+    Args:
+        pmd_violations (list): the pmd violation list
+
+    Returns:
+        dictionary: the dicitonary containing the formatted / processed pmd violation data
+    """
     processed_pmd_violations = {}        
             
     for violation in pmd_violations:
@@ -289,10 +317,12 @@ def process_pmd_violations(pmd_violations):
         type = violation.get("rule")
         priority = violation.get("priority")
         
-        # this next block simply aims to increase the counter of the found error type, which is stored 
-        # inside a three-times nested dictionary.
+        # this next block simply aims to increase the counter of the found violation type, which is stored 
+        # inside a nested dictionary.
         
         # make sure the file exists in the dictionary and set up the desired priority order
+        # (the order is relvant for the report creation later on, because the lines for the .txt file are 
+        # created in the order in which the priority levels are encountered inside the dictionary)
         if file not in processed_pmd_violations:
            processed_pmd_violations[file] = {
                "5": {},
@@ -306,7 +336,7 @@ def process_pmd_violations(pmd_violations):
         if category not in processed_pmd_violations[file][priority]:
             processed_pmd_violations[file][priority][category] = {}
         
-        # increment the error type counter or initialize it with 1
+        # increment the violation type counter or initialize it with 1
         if type in processed_pmd_violations[file][priority][category]:
             processed_pmd_violations[file][priority][category][type] += 1
         else:
@@ -324,6 +354,39 @@ def get_failed_tests(unit_testing_report):
     return failed_tests     
 
 def update_violation_breakdown(breakdown_dict, totals_dict, level_key, nested_dict):
+    """This method essentially keeps a spearate count of the total violations encountered within a violation
+    category, as well as a counter for each specific violation type within one such category. For easier
+    access and processing, two separate dictionaries are implemented. One for the category counter, and one
+    to keep track of all specific violation type counters within that category.
+    Structure:
+        breakdown_dict: {
+            categories: {
+                category1: # of violations within category
+                category2: # of violaitons within category
+                etc....
+            }
+            types: {
+                category1: {
+                    type1: # of occurrences of this violaiton type within the category
+                    type2: # of occurrences of this violaiton type within the category
+                    etc....
+                }
+                category1: {
+                    type1: # of occurrences of this violaiton type within the category
+                    type2: # of occurrences of this violaiton type within the category
+                    etc....
+                }
+                etc....
+            }
+        }
+
+    Args:
+        breakdown_dict (dictionary): this is were the processed data is stored
+        totals_dict (dictionary): _description_
+        level_key (severity / priority level): if checkstyle, then severity; if pmd, then priority level
+        nested_dict (dictionary): this is the violation dicitionary, specific for each tool, 
+                                created from the JSON file (structure exlpained in generate_checkStyle_output)
+    """
     # initialize totals
     totals_dict[level_key] = totals_dict.get(level_key, 0)
 
@@ -332,23 +395,76 @@ def update_violation_breakdown(breakdown_dict, totals_dict, level_key, nested_di
         breakdown_dict[level_key] = {"categories": {}, "types": {}}
 
     for category, type_dict in nested_dict.items():
-        # initialize category totals
+        # initialize category coutner values
         categories_of_level = breakdown_dict[level_key]["categories"]
         categories_of_level[category] = categories_of_level.get(category, 0)
 
-        # initialize type breakdown for category
+        # initialize type breakdown for the current category
         types_of_level = breakdown_dict[level_key]["types"]
         if category not in types_of_level:
             types_of_level[category] = {}
 
-        for error_type, count in type_dict.items():
-            # update totals
-            totals_dict[level_key] += count
-            categories_of_level[category] += count
-            types_of_level[category][error_type] = types_of_level[category].get(error_type, 0) + count
+        for violation_type, count in type_dict.items():
+            # update counter values
+            totals_dict[level_key] += count # number of violations for the severity / priority level
+            categories_of_level[category] += count # number of violations for category
+            # number of violations for the specific violation type within the current category
+            types_of_level[category][violation_type] = types_of_level[category].get(violation_type, 0) + count 
 
 def generate_checkStyle_output(number_of_checkstyle_violations, checkstyle_dict, lines_of_code):
-# generate a summary string for CheckStyle violations including totals and most common issues
+    """The important part in this method is to keep track of the nested dictionary structure, keep in mind
+    that one submission might involve multiple code files.
+    Structure:
+        checkstyle_dict: {
+            filename1: {
+                info: {
+                    category1: {
+                        type1: # of occurrences in file
+                        type2: # of occurrences in file
+                        etc...
+                    }
+                    category2: {
+                        type1: # of occurrences in file
+                        type2: # of occurrences in file
+                        etc...
+                    }
+                    etc....
+                }
+                warning: {
+                    category1: {
+                        type1: # of occurrences in file
+                        etc...
+                    }
+                    category2: {
+                        type1: # of occurrences in file
+                        etc...
+                    }
+                    etc....
+                }
+                error: {
+                    category1: {
+                        type1: # of occurrences in file
+                        etc...
+                    }
+                    category2: {
+                        type1: # of occurrences in file
+                        etc...
+                    }
+                    etc....
+                }
+            }
+            etc... (one dictionary of this structure exists for every file in the submission)
+        }
+
+    Args:
+        number_of_checkstyle_violations (int): # of total checkstyle violations detected
+        checkstyle_dict (dictionary): dictionary with structure as described above
+        lines_of_code (int): total lines of code that were analyzed as part of the submission
+
+    Returns:
+        tuple: (generated output lines, checkstyle score, checkstyle weighted error density)
+    """
+    
     severity_totals = {}
     severity_breakdown = {}
 
@@ -360,7 +476,7 @@ def generate_checkStyle_output(number_of_checkstyle_violations, checkstyle_dict,
 
     checkstyle_lines = [
         f"\nCHECKSTYLE {'-' * 45}\n",
-        f"\nAn overall of {number_of_checkstyle_violations} errors were detected by CheckStyle.",
+        f"\nAn overall of {number_of_checkstyle_violations} violations were detected by CheckStyle.",
         f"\n\nBreakdown by severity level:\n"
     ]
     
@@ -402,7 +518,18 @@ def generate_checkStyle_output(number_of_checkstyle_violations, checkstyle_dict,
     return checkstyle_lines, final_score, total_weighted_error_density
 
 def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
-    # Generate a summary string for PMD violations including totals and most common issues
+    """Structure of the pmd_dict is analogue to the checkstyle_dict structure explained in 
+    generate_checkStyle_output. The only change is that instead of the severity levels 'info',
+    'warning', and 'error', we have the priority levels 'level 1', 'level 2', 'level 3', etc... 
+
+    Args:
+        number_of_pmd_violations (int): # of total pmd violations detected
+        pmd_dict (dicitonary): dictionary with structure as described in generate_checkStyle_output
+        lines_of_code (int): total lines of code that were analyzed as part of the submission
+
+    Returns:
+        tuple: (generated output lines, pmd score, pmd weighted error density)
+    """
     priority_totals = {}
     priority_breakdown = {}
 
@@ -414,7 +541,7 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
 
     pmd_lines = [
         f"\nPMD {'-' * 50}\n",
-        f"\nAn overall of {number_of_pmd_violations} errors were detected by PMD.",
+        f"\nAn overall of {number_of_pmd_violations} violations were detected by PMD.",
         f"\n\nBreakdown by priority level:\n"
     ]
 
@@ -439,6 +566,7 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
         most_common_type = max(type_counts_flat.items(), key=lambda x: x[1], default=("None", 0))
         pmd_lines.append(f"  Most frequent type: {most_common_type[0]} "
                          f"({most_common_type[1]} occurrences)\n")
+        
         adjusted_penalty, weighted_error_density = get_adjusted_penalty(priority, count, lines_of_code, "pmd")
         total_penalty += adjusted_penalty
         total_weighted_error_density += weighted_error_density
@@ -455,6 +583,7 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
     return pmd_lines, final_score, total_weighted_error_density
 
 def get_adjusted_penalty(violation_level, count, lines_of_code, tool_name):
+    # method to calculate the adjusted penalty (part of scoring algorithm)
     try:
         with open (grading_config_path, "r") as file:
             data = json.load(file)
@@ -464,9 +593,11 @@ def get_adjusted_penalty(violation_level, count, lines_of_code, tool_name):
         print(weights)
         if violation_level in weights:
             absolute_pen = weights[violation_level] * count
+            # for debugging purposes / tracing the algorithm
             print(f"absolute_pen for {tool_name}, {violation_level}: {absolute_pen}\n"
                     f"abs_pen = {weights[violation_level]} * {count}\n")
         else:
+            # debugging
             print(f"Error calculating penalty for {tool_name}, {violation_level}")
             return 0
         
@@ -484,7 +615,7 @@ def get_adjusted_penalty(violation_level, count, lines_of_code, tool_name):
     return adjusted_pen, weighted_error_density     
  
 def generate_unitTesting_output(unit_test_failures, number_of_tests, number_of_failures):
-# Generate a formatted output of failed unit test cases with descriptions
+    # Generate a formatted output of failed unit test cases with descriptions
     unit_testing_lines = [
             f"\n\n{'=' * 30}   REQUIREMENTS + RUNTIME   {'=' * 40}\n",
             f"\nJUNIT {'-' * 45}\n\n",
@@ -500,7 +631,7 @@ def generate_unitTesting_output(unit_test_failures, number_of_tests, number_of_f
     return unit_testing_lines 
    
 def generate_score_output(requirements_score, runtime_score, coding_stand_score):
-    # Compute final score with the individual rubric scores
+    # Compute final score with the individual rubric scores and generate score output lines
     student_score_output = [
             f"\n{'=' * 35}  FINAL SCORE   {'=' * 45}",
             f"\n    - Requirements: {requirements_score}",
@@ -514,9 +645,18 @@ def generate_score_output(requirements_score, runtime_score, coding_stand_score)
     return student_score_output
 
 def get_run_and_req_score(number_of_tests, number_of_failures):
-# Calculate the requirement and runtime score based on passed unit tests
-    requirements_score_range = [60, 48, 36, 10, 0]
-    runtime_score_range = [20, 16, 12, 8, 0]
+    """Calculate runtime and requirements score. Currently this is only based on the unit testing
+    results, as we don't have a proper way of automatically analyzing runtime scores.
+
+    Args:
+        number_of_tests (int): overall # of tests that were ran
+        number_of_failures (int): # of tests that failed
+
+    Returns:
+        tuple: (requirements score, runtime score)
+    """
+    requirements_score_range = [60, 48, 36, 10, 0] # from grading criteria of the course that is taught
+    runtime_score_range = [20, 16, 12, 8, 0] # from grading criteria of the course that is taught
     
     if number_of_tests == 0:
         print("Number of Junit tests is 0.")
@@ -526,6 +666,7 @@ def get_run_and_req_score(number_of_tests, number_of_failures):
     requirements_score = 0
     runtime_score = 0
     
+    # assign score based on the unit test success ratio
     if unit_test_success_ratio >= 0.9:
         requirements_score = requirements_score_range[0]
         runtime_score = runtime_score_range[0]
@@ -544,6 +685,17 @@ def get_run_and_req_score(number_of_tests, number_of_failures):
     return requirements_score,runtime_score
 
 def calculate_percentile_score(checkStyle_error_density ,pmd_error_density, total_error_density):
+    """Calculates the percentile scores of the computed error densities of the analyzed file in relation
+    to the global dataset (weighted_data.csv)
+
+    Args:
+        checkStyle_error_density (float): checkstyle error density of the file
+        pmd_error_density (float): pmd error density of the file
+        total_error_density (float): overall error density of the file
+
+    Returns:
+        tuple: (checkstyle percentile score, pmd percentile score, overall percentile score)
+    """
     data = pd.read_csv("lib/weighted_data.csv", header=0)
     checkstyle_data = data["cs_density"].to_numpy()
     pmd_data = data["pmd_density"].to_numpy()
@@ -557,109 +709,127 @@ def calculate_percentile_score(checkStyle_error_density ,pmd_error_density, tota
 
 # generate grade report using the previously constructed JSON file
 def create_grade_report(json_output_file_path):
-# Main function: parse JSON report, process violations and test results, generate formatted output, and save to file
-    # try:
-    with open(json_output_file_path, "r") as file: # open violations JSON file in read-mode
-        data = json.load(file)
+    """This function is the main function, calling all other functions during the process of creating the
+    .txt file.
 
-    # store and split up the extracted data
-    student_name = data.get("studentName")
-    report_date = data.get("checkDate")
-    violations = data.get("violations", {})
-    lines_of_code = data.get("linesOfCode")
-    
-    # extract different violation lists 
-    checkstyle_violations = violations.get("checkstyle", []) 
-    pmd_violations = violations.get("pmd", []) 
-    unit_testing_report = violations.get("Unit testing", {})
-    
-    number_of_checkstyle_violations = len(checkstyle_violations)
-    number_of_pmd_violations = len(pmd_violations)
-    
-    # process checkstyle and pmd violations
-    checkstyle_dict = process_checkstyle_violations(checkstyle_violations)
-    pmd_dict = process_pmd_violations(pmd_violations)
-    
-    # get unit testing details
-    unit_test_failures = get_failed_tests(unit_testing_report)
-    number_of_tests = int(unit_testing_report.get("summary").get("testsRun"))
-    number_of_failures = int(unit_testing_report.get("summary").get("failures"))
-    
-    # intro lines for report
-    intro_lines = [
-        f"This is report {report_date} for student {student_name}\n",
-        f"\nThe report covers a total of {lines_of_code} lines of code\n",
-        f"\n{number_of_checkstyle_violations} errors were detected by CheckStyle",
-        f"\n{number_of_pmd_violations} errors were detected by PMD",
-        f"\n{number_of_failures} out of {number_of_tests} unit tests failed.",
-        f"\n\nReport: \n",
-        f"\n{'=' * 25}   CODING STANDARDS   {'=' * 50}\n"
-    ]
-    
-    # generate summary output lines
-    checkStyle_lines, checkStyle_score, checkstyle_weighted_density = generate_checkStyle_output(
-        number_of_checkstyle_violations, 
-        checkstyle_dict,
-        lines_of_code
-    )
-    
-    pmd_lines, pmd_score, pmd_weighted_density = generate_pmd_output(
-        number_of_pmd_violations, 
-        pmd_dict,
-        lines_of_code
-    )
-    
-    total_weighted_density = checkstyle_weighted_density + pmd_weighted_density
-    checkstyle_percentile, pmd_percentile, overall_percentile = calculate_percentile_score(
-        checkstyle_weighted_density,
-        pmd_weighted_density,
-        total_weighted_density
-    )
-            
-    checkStyle_lines.append(
-        f"\n\nOverall weighted CheckStyle error density: {round(checkstyle_weighted_density, 5)}"
-        f"\nThis places you in the {checkstyle_percentile}th percentile of submissions in the database."
-        f"\nThat is, {100 - checkstyle_percentile}% of submissions had a higher CheckStyle error density than yours.\n"
-    )
-    
-    pmd_lines.append(
-        f"\n\nOverall weighted PMD error density: {round(pmd_weighted_density, 5)}"
-        f"\nThis places you in the {pmd_percentile}th percentile of submissions in the database."
-        f"\nThat is, {100 - pmd_percentile}% of submissions had a higher PMD error density than yours. "
-    )
-    
-    coding_style_summary_lines = [
-        f"\n\nSUMMARY  {'-' * 40}\n",
-        f"\nThe cumulative weighted error density of you submission is: {round(total_weighted_density, 5)}.",
-        f"\nThis places you in the: {overall_percentile}th percentile.",
-        f"\nThat is, {100 - overall_percentile}% of the average student submission have a higher error density than yours."
-    ]
-    
-    unit_testing_lines = generate_unitTesting_output(
-        unit_test_failures, number_of_tests, 
-        number_of_failures
-    )
+    Args:
+        json_output_file_path (_type_): The path to the violation report JSON file created by the first 
+                                        part of the script
 
-    print(f"CheckStyle Score: {checkStyle_score}\n"
-            f"PMD score: {pmd_score}\n")
-    
-    # generate student score output
-    requirements_score, runtime_score = get_run_and_req_score(number_of_tests, number_of_failures)
-    coding_std_score = round((checkStyle_score + pmd_score) / 2)
-    score_lines = generate_score_output(requirements_score, runtime_score, coding_std_score)
-    
-    with open(grade_report_file_path, "w") as file:
-        file.writelines(intro_lines)
-        file.writelines(checkStyle_lines)
-        file.writelines(pmd_lines)
-        file.writelines(coding_style_summary_lines)
-        file.writelines(unit_testing_lines)
-        file.writelines(score_lines)
-    
-    print(f"Grade report created and saved to: {grade_report_file_path}")
+    Returns:
+        None: Returns nothing (creates .txt file in specified directory).
+    """
+    try:
+        with open(json_output_file_path, "r") as file: # open violations JSON file in read-mode
+            data = json.load(file)
+
+        # store and split up the extracted data
+        student_name = data.get("studentName")
+        report_date = data.get("checkDate")
+        lines_of_code = data.get("linesOfCode")
+        violations = data.get("violations", {})
         
-    # except Exception as e:
-    #     print(f"Failed to generate report: {e}")
-    #     return []
+        # extract different violation lists from JSON file
+        checkstyle_violations = violations.get("checkstyle", []) 
+        pmd_violations = violations.get("pmd", []) 
+        unit_testing_report = violations.get("Unit testing", {})
+        
+        number_of_checkstyle_violations = len(checkstyle_violations)
+        number_of_pmd_violations = len(pmd_violations)
+        
+        # process checkstyle and pmd violations
+        checkstyle_dict = process_checkstyle_violations(checkstyle_violations)
+        pmd_dict = process_pmd_violations(pmd_violations)
+        
+        # get unit testing details
+        unit_test_failures = get_failed_tests(unit_testing_report)
+        number_of_tests = int(unit_testing_report.get("summary").get("testsRun"))
+        number_of_failures = int(unit_testing_report.get("summary").get("failures"))
+        
+        # intro lines for report
+        intro_lines = [
+            f"This is report {report_date} for student {student_name}\n",
+            f"\nThe report covers a total of {lines_of_code} lines of code\n",
+            f"\n{number_of_checkstyle_violations} errors were detected by CheckStyle",
+            f"\n{number_of_pmd_violations} errors were detected by PMD",
+            f"\n{number_of_failures} out of {number_of_tests} unit tests failed.",
+            f"\n\nReport: \n",
+            f"\n{'=' * 25}   CODING STANDARDS   {'=' * 50}\n"
+        ]
+        
+        # generate checkstyle lines and stats
+        checkStyle_lines, checkStyle_score, checkstyle_weighted_density = generate_checkStyle_output(
+            number_of_checkstyle_violations, 
+            checkstyle_dict,
+            lines_of_code
+        )
+        
+        # generate pmd lines and stats
+        pmd_lines, pmd_score, pmd_weighted_density = generate_pmd_output(
+            number_of_pmd_violations, 
+            pmd_dict,
+            lines_of_code
+        )
+        
+        # get percentile scores
+        total_weighted_density = checkstyle_weighted_density + pmd_weighted_density
+        checkstyle_percentile, pmd_percentile, overall_percentile = calculate_percentile_score(
+            checkstyle_weighted_density,
+            pmd_weighted_density,
+            total_weighted_density
+        )
+               
+        # add checkstyle stats to checkstyle lines 
+        checkStyle_lines.append(
+            f"\n\nOverall weighted CheckStyle error density: {round(checkstyle_weighted_density, 5)}"
+            f"\nThis places you in the {checkstyle_percentile}th percentile of submissions in the database."
+            f"\nThat is, {100 - checkstyle_percentile}% of submissions had a higher CheckStyle error density than yours.\n"
+        )
+        
+        # add pmd stats to pmd lines
+        pmd_lines.append(
+            f"\n\nOverall weighted PMD error density: {round(pmd_weighted_density, 5)}"
+            f"\nThis places you in the {pmd_percentile}th percentile of submissions in the database."
+            f"\nThat is, {100 - pmd_percentile}% of submissions had a higher PMD error density than yours. "
+        )
+        
+        # add overall stats to coding style summary lines
+        coding_style_summary_lines = [
+            f"\n\nSUMMARY  {'-' * 40}\n",
+            f"\nThe cumulative weighted error density of you submission is: {round(total_weighted_density, 5)}.",
+            f"\nThis places you in the: {overall_percentile}th percentile.",
+            f"\nThat is, {100 - overall_percentile}% of the average student submission have a higher error density than yours."
+        ]
+        
+        # generate unit testing lines
+        unit_testing_lines = generate_unitTesting_output(
+            unit_test_failures, number_of_tests, 
+            number_of_failures
+        )
+
+        # for debugging purposes, i.e. tracing the grade creation algorithm
+        print(
+            f"CheckStyle Score: {checkStyle_score}\n"
+            f"PMD score: {pmd_score}\n"
+        )
+        
+        # generate student score output
+        requirements_score, runtime_score = get_run_and_req_score(number_of_tests, number_of_failures)
+        coding_std_score = round((checkStyle_score + pmd_score) / 2)
+        score_lines = generate_score_output(requirements_score, runtime_score, coding_std_score)
+        
+        # write all lines to .txt file and store the file under specified path
+        with open(grade_report_file_path, "w") as file:
+            file.writelines(intro_lines)
+            file.writelines(checkStyle_lines)
+            file.writelines(pmd_lines)
+            file.writelines(coding_style_summary_lines)
+            file.writelines(unit_testing_lines)
+            file.writelines(score_lines)
+        
+        print(f"Grade report created and saved to: {grade_report_file_path}")
+        
+    except Exception as e:
+        print(f"Failed to generate report: {e}")
     
 create_grade_report(output_file_path)
