@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 /*
- * @Seth Weddle
+ * @author Essa Imhmed
  * @3/27/2025
  */
 
