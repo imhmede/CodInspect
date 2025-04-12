@@ -502,7 +502,7 @@ def generate_checkStyle_output(number_of_checkstyle_violations, checkstyle_dict,
         checkstyle_lines.append(f"  Most frequent type: {most_common_type[0]} "
                                 f"({most_common_type[1]} occurrences)\n")
         
-        checkstyle_lines.append(get_style_violation_example(most_common_type[0]), "checkstyle")
+        checkstyle_lines.append(get_style_violation_example(most_common_type[0], "checkstyle"))
         
         adjusted_penalty, weighted_error_denstiy = get_adjusted_penalty(severity, count, lines_of_code, "checkstyle")
         total_penalty += adjusted_penalty
@@ -569,7 +569,7 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
         pmd_lines.append(f"  Most frequent type: {most_common_type[0]} "
                          f"({most_common_type[1]} occurrences)\n")
         
-        pmd_lines.append(get_style_violation_example(most_common_type[0]), "pmd")
+        pmd_lines.append(get_style_violation_example(most_common_type[0], "pmd"))
         
         adjusted_penalty, weighted_error_density = get_adjusted_penalty(priority, count, lines_of_code, "pmd")
         total_penalty += adjusted_penalty
