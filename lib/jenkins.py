@@ -607,15 +607,23 @@ def get_style_violation_example(violation_Type, tool_name):
                     beginline = int(violation.get("beginline", 0))
                     endline = int(violation.get("endline", 0))
                     message = violation.get("message", "")
-                    with open(f"Upload_here/{filename}", "r") as file:
+                    file_location = os.path.join("Upload_here", filename)
+                    with open(file_location, "r") as file:
                         for current_line_number, line in enumerate(file, start=1):
                             if beginline <= current_line_number <= endline:
                                 extracted_lines.append(line)
                             elif current_line_number > endline:
                                 break # break after passing endLine
+                    print(
+                        f"{filename}",
+                        f"{beginline}",
+                        f"{endline}",
+                        f"{message}",
+                        f"{extracted_lines}"
+                    )
                     output_lines.extend(
-                        format_code_violation_example(filename, beginline, message, extracted_lines)
-                    )    
+                        format_code_violation_example(filename, beginline, message, ("".join(extracted_lines)))
+                    )  
                     break # stop iterating over all violations after example was found
             
                     
@@ -625,15 +633,22 @@ def get_style_violation_example(violation_Type, tool_name):
                 type = violation.get("source", "").rsplit(".", 1)[-1] 
                 if type == violation_Type:
                     filename = os.path.basename(violation.get("file", ""))
-                    line = int(violation.get("line", 0))
+                    error_line = int(violation.get("line", 0))
                     message = violation.get("message", "")
-                    with open(f"Upload_here/{filename}", "r") as file:
+                    file_location = os.path.join("Upload_here", filename)
+                    with open(file_location, "r") as file:
                         for current_line_number, line in enumerate(file, start=1):
                             if line == current_line_number:
                                 extracted_lines.append(line)
                                 break # break after passing endLine
+                    print(
+                        f"{filename}",
+                        f"{error_line}",
+                        f"{message}",
+                        f"{extracted_lines}"
+                    )
                     output_lines.extend(
-                        format_code_violation_example(filename, line, message, extracted_lines)
+                        format_code_violation_example(filename, error_line, message, ("".join(extracted_lines)))
                     )        
                     break # stop iterating over all violations after example was found
             
@@ -646,8 +661,10 @@ def get_style_violation_example(violation_Type, tool_name):
 def format_code_violation_example(filename, line, message, example):
     formatted_lines = [
         f"  Example from file: {filename}, in line {line}",
+        f"\n{"-" * 90}\n",
         f"      {example}",
-        f"  Feedback: {message}"
+        f"{"-" * 90}\n",
+        f"  Feedback: {message}\n"
     ]
     return formatted_lines
 
