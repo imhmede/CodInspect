@@ -613,7 +613,7 @@ def get_style_violation_example(violation_Type, tool_name):
                                 extracted_lines.append(line)
                             elif current_line_number > endline:
                                 break # break after passing endLine
-                    output_lines.append(
+                    output_lines.extend(
                         format_code_violation_example(filename, beginline, message, extracted_lines)
                     )    
                     break # stop iterating over all violations after example was found
@@ -632,7 +632,7 @@ def get_style_violation_example(violation_Type, tool_name):
                             if line == current_line_number:
                                 extracted_lines.append(line)
                                 break # break after passing endLine
-                    output_lines.append(
+                    output_lines.extend(
                         format_code_violation_example(filename, line, message, extracted_lines)
                     )        
                     break # stop iterating over all violations after example was found
