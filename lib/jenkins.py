@@ -602,11 +602,11 @@ def get_style_violation_example(violation_Type, tool_name):
         case "pmd":
             violations = violations.get("pmd", [])
             for violation in violations:
-                if violation["rule"] == violation_Type:
-                    filename = os.path.basename(violation["file"])
-                    beginline = violation["beginline"]
-                    endline = violation["endline"]
-                    message = violation["message"]
+                if violation.get("rule", "") == violation_Type:
+                    filename = os.path.basename(violation.get("file", ""))
+                    beginline = violation.get("beginline", "")
+                    endline = violation.get("endline", "")
+                    message = violation.get("message", "")
                     with open(f"Upload_here/{filename}", "r") as file:
                         for current_line_number, line in enumerate(file, start=1):
                             if beginline <= current_line_number <= endline:
@@ -621,10 +621,11 @@ def get_style_violation_example(violation_Type, tool_name):
         case "checkstyle":
             violations = violations.get("checkstyle", [])
             for violation in violations:
-                if violation["rule"] == violation_Type:
-                    filename = os.path.basename(violation["file"])
-                    line = violation["line"]
-                    message = violation["message"]
+                type = violation.get("source", "").rsplit(".", 1)[-1] 
+                if type == violation_Type:
+                    filename = os.path.basename(violation.get("file", ""))
+                    line = violation.get("line", 0)
+                    message = violation.get("message", "")
                     with open(f"Upload_here/{filename}", "r") as file:
                         for current_line_number, line in enumerate(file, start=1):
                             if line == current_line_number:
