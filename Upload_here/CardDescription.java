@@ -1,87 +1,56 @@
-/*
- * @author Essa Imhmed
- * ID: 660288257
- */
 import java.util.Scanner;
-public class CardDescription{
-    //asking the user for input for card to get the rank and suit
-    public static void main(String[] args) {
-        Scanner in =new Scanner(System.in);
-        System.out.println("Enter the rank of the card");
-        String rank= in.next();
-        System.out.println("Enter the suit of the card");
-        String suit= in.next();
-        suit = suit.toUpperCase();
-        rank = rank.toUpperCase();
-        System.out.println(getCardDescription(rank,suit));
-    }
-    /*
-     * @ param rank: the rank of the card
-     * @ param suit: the suit of the card
-     * @ return: the description of the card
-     * This method takes the rank and suit of a card and returns the description of the card
-     * 
+
+public class CardDescription {
+
+    /**
+     * Converts shorthand notation of a card to its full description.
+     * @author Jerry Sena
+     * @param rank The rank of the card (A, 2-10, J, Q, K).
+     * @param suit The suit of the card ( D, H, S, C).
+     * @return The full description of the card, or "Invalid input" if the input is incorrect.
      */
-    public static String getCardDescription(String rank, String suit) {
-        String card="";
-        if(rank.equals("A")){
-            card+="Ace";
+    
+     public static String getCardDescription(String rank, String suit) {
+        // Convert rank to full name
+        String fullRank;
+        switch (rank) {
+            case "A": fullRank = "Ace"; break;
+            case "J": fullRank = "Jack"; break;
+            case "Q": fullRank = "Queen"; break;
+            case "K": fullRank = "King"; break;
+            case "2": case "3": case "4": case "5": case "6": case "7": case "8": case "9": case "10":
+                fullRank = rank; 
+                break;
+            default:
+                return "Invalid input";
         }
-        else if(rank.equals("2")){
-            card+="Two";
+        String fullSuit;
+        switch (suit) {
+            case "D": fullSuit = "Diamonds"; break;
+            case "H": fullSuit = "Hearts"; break;
+            case "S": fullSuit = "Spades"; break;
+            case "C": fullSuit = "Clubs"; break;
+            default:
+                return "Invalid input";
         }
-        else if(rank.equals("3")){
-            card+="Three";
-        }
-        else if(rank.equals("4")){
-            card+="Four";
-        }
-        else if(rank.equals("5")){
-            card+="Five";
-        }
-        else if(rank.equals("6")){
-            card+="Six";
-        }
-        else if(rank.equals("7")){
-            card+="Seven";
-        }
-        else if(rank.equals("8")){
-            card+="Eight";
-        }
-        else if(rank.equals("9")){
-            card+="Nine";
-        }
-        else if(rank.equals("10")){
-            card+="Ten";
-        }
-        else if(rank.equals("J")){
-            card+="Jack";
-        }
-        else if(rank.equals("Q")){
-            card+="Queen";
-        }
-        else if(rank.equals("K")){
-            card+="King";
-        }
-        else{
-            return "Invalid Rank";
-        }
-        card+=" of ";
-        if(suit.equals("D")){
-            card+="Diamonds";
-        }
-        else if(suit.equals("H")){
-            card+="Hearts";
-        }
-        else if(suit.equals("S")){
-            card+="Spades";
-        }
-        else if(suit.equals("C")){
-            card+="Clubs";
-        }
-        else{
-            return "Invalid Suit";
-        }
-        return card;
-    }
+        return fullRank + " of " + fullSuit;
+     }
+     
+     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter card rank (A, 2-10, J, Q, K): ");
+        String rank = scanner.next().toUpperCase();
+
+        System.out.print("Enter card suit (D, H, S, C): ");
+        String suit = scanner.next().toUpperCase();
+
+        String description = getCardDescription(rank, suit);
+
+        System.out.println("Card: " + description);
+
+        scanner.close();
+
+     }
+
 }
