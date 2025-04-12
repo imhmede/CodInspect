@@ -611,6 +611,7 @@ def get_style_violation_example(violation_Type, tool_name):
                     with open(file_location, "r") as file:
                         for current_line_number, line in enumerate(file, start=1):
                             if beginline <= current_line_number <= endline:
+                                print(line)
                                 extracted_lines.append(line)
                             elif current_line_number > endline:
                                 break # break after passing endLine
@@ -626,7 +627,6 @@ def get_style_violation_example(violation_Type, tool_name):
                     )  
                     break # stop iterating over all violations after example was found
             
-                    
         case "checkstyle":
             violations = violations.get("checkstyle", [])
             for violation in violations:
@@ -638,7 +638,8 @@ def get_style_violation_example(violation_Type, tool_name):
                     file_location = os.path.join("Upload_here", filename)
                     with open(file_location, "r") as file:
                         for current_line_number, line in enumerate(file, start=1):
-                            if line == current_line_number:
+                            if error_line == current_line_number:
+                                print(line)
                                 extracted_lines.append(line)
                                 break # break after passing endLine
                     print(
