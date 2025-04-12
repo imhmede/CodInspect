@@ -1,60 +1,69 @@
-/*
- * This program converts inputed short hand notation into the cards description
- * @author Essa Imhmed
- * Date: 3/27/25
- */
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+/**
+ * @author Essa Imhmed
+ */
+
 public class CardDescription {
-    /* Converts short hand notation into the cards description
-    *  @param rank, The card's rank (A, Q, K, J, 2-10)
-    *  @param suit, The card's suit (S, C, D, H)
-    */ 
+
     public static String getCardDescription(String rank, String suit) {
-    String rankDescription = "";
-    String suitDescription = "";
-    // Determines the Card's rank
-    if (rank.equalsIgnoreCase("A")) {
-        rankDescription = "Ace";
-    } else if (rank.equalsIgnoreCase("Q")) {
-        rankDescription = "Queen";
-    } else if (rank.equalsIgnoreCase("K")) {
-        rankDescription = "King";
-    } else if (rank.equalsIgnoreCase("J")) {
-        rankDescription = "Jack";
-    } else if (Integer.parseInt(rank) >= 2 && Integer.parseInt(rank) <= 10) {
-        rankDescription = rank;
-    } else {
-        rankDescription = "Invalid rank";
+        // Mapping ranks to their full names
+        Map<String, String> rankMap = new HashMap<>();
+        rankMap.put("A", "Ace");
+        rankMap.put("2", "2");
+        rankMap.put("3", "3");
+        rankMap.put("4", "4");
+        rankMap.put("5", "5");
+        rankMap.put("6", "6");
+        rankMap.put("7", "7");
+        rankMap.put("8", "8");
+        rankMap.put("9", "9");
+        rankMap.put("10", "10");
+        rankMap.put("J", "Jack");
+        rankMap.put("Q", "Queen");
+        rankMap.put("K", "King");
+
+        // Mapping suits to their full names
+        Map<String, String> suitMap = new HashMap<>();
+        suitMap.put("D", "Diamonds");
+        suitMap.put("H", "Hearts");
+        suitMap.put("S", "Spades");
+        suitMap.put("C", "Clubs");
+
+        // Validating input
+        if (!rankMap.containsKey(rank) || !suitMap.containsKey(suit)) {
+            return "Invalid card notation";
+        }
+
+        return rankMap.get(rank) + " of " + suitMap.get(suit);
     }
-    // Determines the Card's suit
-    if (suit.equalsIgnoreCase("S")) {
-        suitDescription = " of Spades";
-    } else if (suit.equalsIgnoreCase("C")) {
-        suitDescription = " of Clubs";
-    } else if (suit.equalsIgnoreCase("D")) {
-        suitDescription = " of Diamonds";
-    } else if (suit.equalsIgnoreCase("H")) {
-        suitDescription = " of Hearts";
-    } else { 
-        suitDescription = " of an Invalid suit";
-    }
-    // Concatenates the rank and suit into a full description of the card
-    String fullDescription = rankDescription + suitDescription;
-    return fullDescription;
-    }
-        /*
-        * This is the main method
-        * @param args a command line arguments
-        */
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the cards rank: ");
-        String rank = scanner.nextLine();
-        System.out.print("Enter the cards suit: ");
-        String suit = scanner.nextLine();
+
+        // Testing multiple inputs
+        String[][] testCases = {
+                {"A", "S"}, // Ace of Spades
+                {"10", "H"}, // 10 of Hearts
+                {"K", "D"}, // King of Diamonds
+                {"Q", "C"}, // Queen of Clubs
+                {"5", "X"}, // Invalid card notation
+                {"Z", "S"}  // Invalid card notation
+        };
+
+        for (String[] testCase : testCases) {
+            System.out.println("Input: " + testCase[0] + testCase[1] + " -> " + getCardDescription(testCase[0], testCase[1]));
+        }
+
+        // Allow user input
+        System.out.println("Enter a card rank (e.g., A, 2-10, J, Q, K): ");
+        String userRank = scanner.next().toUpperCase();
+        System.out.println("Enter a card suit (D, H, S, C): ");
+        String userSuit = scanner.next().toUpperCase();
+
+        System.out.println("Result: " + getCardDescription(userRank, userSuit));
+
         scanner.close();
-        getCardDescription(rank, suit);
-    // Prints out the card description
-        System.out.printf("The card is the %s", getCardDescription(rank, suit));
     }
 }
