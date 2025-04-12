@@ -634,7 +634,10 @@ def get_style_violation_example(violation_Type, tool_name):
             output_lines.append(
                 format_code_violation_example(filename, line, message, extracted_lines)
                 )
-    
+        case _:
+            print("Error in match statement of get_style_violation_example()")
+            pass 
+        
     return output_lines
 
 def format_code_violation_example(filename, line, message, example):
