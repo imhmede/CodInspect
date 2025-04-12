@@ -502,6 +502,8 @@ def generate_checkStyle_output(number_of_checkstyle_violations, checkstyle_dict,
         checkstyle_lines.append(f"  Most frequent type: {most_common_type[0]} "
                                 f"({most_common_type[1]} occurrences)\n")
         
+        checkstyle_lines.append(get_style_violation_example(most_common_type[0]), "checkstyle")
+        
         adjusted_penalty, weighted_error_denstiy = get_adjusted_penalty(severity, count, lines_of_code, "checkstyle")
         total_penalty += adjusted_penalty
         total_weighted_error_density += weighted_error_denstiy
@@ -567,6 +569,8 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
         pmd_lines.append(f"  Most frequent type: {most_common_type[0]} "
                          f"({most_common_type[1]} occurrences)\n")
         
+        pmd_lines.append(get_style_violation_example(most_common_type[0]), "pmd")
+        
         adjusted_penalty, weighted_error_density = get_adjusted_penalty(priority, count, lines_of_code, "pmd")
         total_penalty += adjusted_penalty
         total_weighted_error_density += weighted_error_density
@@ -582,6 +586,65 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
 
     return pmd_lines, final_score, total_weighted_error_density
 
+def get_style_violation_example(violation_Type, tool_name):
+    output_lines = []
+    
+    if violation_Type == None:
+        return output_lines
+    
+    with open(output_file_path, "r") as file:
+        data = json.load(file)
+        violations = data.get("violations", {})
+    
+    extracted_lines = []
+    
+    match tool_name:
+        case "pmd":
+            violations = violations.get("pmd", [])
+            for violation in violations:
+                if violation["rule"] == violation_Type:
+                    filename = os.path.basename(violation["file"])
+                    beginline = violation["beginline"]
+                    endline = violation["endline"]
+                    message = violation["message"]
+                    with open(f"Upload_here/{filename}", "r") as file:
+                        for current_line_number, line in enumerate(file, start=1):
+                            if beginline <= current_line_number <= endline:
+                                extracted_lines.append(line)
+                            elif current_line_number > endline:
+                                break # break after passing endLine
+                    break # stop iterating over all violations after example was found
+            output_lines.append(
+                format_code_violation_example(filename, beginline, message, extracted_lines)
+                )
+                    
+        case "checkstyle":
+            violations = violations.get("checkstyle", [])
+            for violation in violations:
+                if violation["rule"] == violation_Type:
+                    filename = os.path.basename(violation["file"])
+                    line = violation["line"]
+                    message = violation["message"]
+                    with open(f"Upload_here/{filename}", "r") as file:
+                        for current_line_number, line in enumerate(file, start=1):
+                            if line == current_line_number:
+                                extracted_lines.append(line)
+                                break # break after passing endLine
+                    break # stop iterating over all violations after example was found
+            output_lines.append(
+                format_code_violation_example(filename, line, message, extracted_lines)
+                )
+    
+    return output_lines
+
+def format_code_violation_example(filename, line, message, example):
+    formatted_lines = [
+        f"  Example from file: {filename}, in line {line}",
+        f"      {example}",
+        f"  Feedback: {message}"
+    ]
+    return formatted_lines
+
 def get_adjusted_penalty(violation_level, count, lines_of_code, tool_name):
     # method to calculate the adjusted penalty (part of scoring algorithm)
     try:
@@ -594,8 +657,10 @@ def get_adjusted_penalty(violation_level, count, lines_of_code, tool_name):
         if violation_level in weights:
             absolute_pen = weights[violation_level] * count
             # for debugging purposes / tracing the algorithm
-            print(f"absolute_pen for {tool_name}, {violation_level}: {absolute_pen}\n"
-                    f"abs_pen = {weights[violation_level]} * {count}\n")
+            print(
+                f"absolute_pen for {tool_name}, {violation_level}: {absolute_pen}\n"
+                f"abs_pen = {weights[violation_level]} * {count}\n"
+            )
         else:
             # debugging
             print(f"Error calculating penalty for {tool_name}, {violation_level}")
@@ -613,7 +678,7 @@ def get_adjusted_penalty(violation_level, count, lines_of_code, tool_name):
         return 0
     
     return adjusted_pen, weighted_error_density     
- 
+
 def generate_unitTesting_output(unit_test_failures, number_of_tests, number_of_failures):
     # Generate a formatted output of failed unit test cases with descriptions
     unit_testing_lines = [
