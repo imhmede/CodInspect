@@ -520,7 +520,7 @@ def generate_checkStyle_output(number_of_checkstyle_violations, checkstyle_dict,
     if number_of_checkstyle_violations == 0:
         checkstyle_lines = [
             f"\nPMD {'-' * 50}\n",
-            f"No errors detected... Good job!\n"
+            f"No errors detected... Good job!"
         ]
 
     return checkstyle_lines, final_score, total_weighted_error_density
@@ -594,15 +594,15 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
     if number_of_pmd_violations == 0:
         pmd_lines = [
             f"\nPMD {'-' * 50}\n",
-            f"No errors detected... Good job!\n"
+            f"No errors detected... Good job!"
         ]
 
     return pmd_lines, final_score, total_weighted_error_density
 
 def get_style_violation_example(violation_Type, tool_name):
     output_lines = []
-    
-    if violation_Type == None:
+    print(violation_Type)
+    if len(violation_Type):
         output_lines.append(
             f"No errors to be found... Good job!"
         )
