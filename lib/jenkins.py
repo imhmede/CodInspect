@@ -464,12 +464,6 @@ def generate_checkStyle_output(number_of_checkstyle_violations, checkstyle_dict,
     Returns:
         tuple: (generated output lines, checkstyle score, checkstyle weighted error density)
     """
-    if number_of_checkstyle_violations == 0:
-        checkstyle_lines = [
-            f"\nPMD {'-' * 50}\n",
-            f"No errors detected... Good job!\n"
-        ]
-        return checkstyle_lines
     
     severity_totals = {}
     severity_breakdown = {}
@@ -522,6 +516,12 @@ def generate_checkStyle_output(number_of_checkstyle_violations, checkstyle_dict,
         
     final_pen = min(total_penalty, max_score)
     final_score = max(max_score - final_pen, min_score)
+    
+    if number_of_checkstyle_violations == 0:
+        checkstyle_lines = [
+            f"\nPMD {'-' * 50}\n",
+            f"No errors detected... Good job!\n"
+        ]
 
     return checkstyle_lines, final_score, total_weighted_error_density
 
@@ -538,12 +538,6 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
     Returns:
         tuple: (generated output lines, pmd score, pmd weighted error density)
     """
-    if number_of_pmd_violations == 0:
-        pmd_lines = [
-            f"\nPMD {'-' * 50}\n",
-            f"No errors detected... Good job!\n"
-        ]
-        return pmd_lines
     
     priority_totals = {}
     priority_breakdown = {}
@@ -596,6 +590,12 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
         
     final_pen = min(total_penalty, max_score)
     final_score = max(max_score - final_pen, min_score)
+    
+    if number_of_pmd_violations == 0:
+        pmd_lines = [
+            f"\nPMD {'-' * 50}\n",
+            f"No errors detected... Good job!\n"
+        ]
 
     return pmd_lines, final_score, total_weighted_error_density
 
