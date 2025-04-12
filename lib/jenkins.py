@@ -464,6 +464,12 @@ def generate_checkStyle_output(number_of_checkstyle_violations, checkstyle_dict,
     Returns:
         tuple: (generated output lines, checkstyle score, checkstyle weighted error density)
     """
+    if number_of_checkstyle_violations == 0:
+        checkstyle_lines = [
+            f"\nPMD {'-' * 50}\n",
+            f"No errors detected... Good job!\n"
+        ]
+        return checkstyle_lines
     
     severity_totals = {}
     severity_breakdown = {}
@@ -532,6 +538,13 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
     Returns:
         tuple: (generated output lines, pmd score, pmd weighted error density)
     """
+    if number_of_pmd_violations == 0:
+        pmd_lines = [
+            f"\nPMD {'-' * 50}\n",
+            f"No errors detected... Good job!\n"
+        ]
+        return pmd_lines
+    
     priority_totals = {}
     priority_breakdown = {}
 
@@ -590,6 +603,9 @@ def get_style_violation_example(violation_Type, tool_name):
     output_lines = []
     
     if violation_Type == None:
+        output_lines.append(
+            f"No errors to be found... Good job!"
+        )
         return output_lines
     
     with open(output_file_path, "r") as file:
