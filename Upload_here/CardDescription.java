@@ -1,71 +1,77 @@
+/** This program converts shorthand card notation into a full description.
+ * @author Essa Imhmed
+ * @version 1.1
+ * @date 2025-03-27
+ * CS 123 Programming Assignment 05
+*/
+
 import java.util.Scanner;
 
 /**
- * This program receives two parameters describing a card rank and a card suit and returns the description
- * while also indicating an invalid format or rank if entered.
- * @author Essa Imhmed
- */
+* This method takes the ranks and suits, returning the full card names.
+* @param rank the card rank
+* @param suit the card suit
+* @return the full card description
+*/
+
 public class CardDescription {
-
-    /**
-     * Converts shorthand card notation into a full card description.
-     * @param rank the rank of the card 
-     * @param suit the suit of the card 
-     * @return full description or an invalid message
-     */
     public static String getCardDescription(String rank, String suit) {
-        String fullRank = "";
-        String fullSuit = "";
+        String rankDescr = switch (rank) { // Single values perfect for switch
+            case "A" -> "Ace";
+            case "J" -> "Jack";
+            case "Q" -> "Queen";
+            case "K" -> "King";
+            case "2", "3", "4", "5", "6", "7", "8", "9", "10" -> rank;
+            // Numbers don't require conversion
+            default -> "Invalid"; // Captures all invalid inputs
+        };
+    
+        String suitDescr = switch (suit) {
+            case "D" -> "Diamonds";
+            case "H" -> "Hearts";
+            case "S" -> "Spades";
+            case "C" -> "Clubs";
+            default -> "Invalid"; // Captures all invalid inputs
+        };
+    
+        /**
+         *  Base case: If any card input is invalid, 
+            return "Sorry, that's an invalid card."
+            else return full description of the card
+         */
 
-        switch (rank) {
-            case "A": fullRank = "Ace"; break;
-            case "J": fullRank = "Jack"; break;
-            case "Q": fullRank = "Queen"; break;
-            case "K": fullRank = "King"; break;
-            default:
-                if (rank.matches("[2-9]|10")) {
-                    fullRank = rank;
-                } else {
-                    return "Invalid rank: " + rank;
-                }
+        if (rankDescr.startsWith("Invalid") ||
+            suitDescr.startsWith("Invalid")) {
+            return "Sorry, that's an invalid card.";
+        // The smallest input already being used for method, no other calls
         }
-
-        switch (suit) {
-            case "D": fullSuit = "Diamonds"; break;
-            case "H": fullSuit = "Hearts"; break;
-            case "S": fullSuit = "Spades"; break;
-            case "C": fullSuit = "Clubs"; break;
-            default: return "Invalid suit: " + suit;
-        }
-
-        return fullRank + " of " + fullSuit;
+        return rankDescr + " of " + suitDescr;
     }
 
-     /**
-     * This is the main method.
-     * @param args command-line arguments 
-     */
+    /**
+    * The main method to collect the input content from the user.
+    * @param args command-line arguments
+    */
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter card notation (ex. AC for Ace of Clubs): ");
-        String input = scanner.next().toUpperCase();
-        String rank, suit;
-
-        if (input.length() == 2) {
-            rank = input.substring(0, 1);
-            suit = input.substring(1, 2);
-        } else if (input.length() == 3 && input.startsWith("10")) {
-            rank = "10";
-            suit = input.substring(2);
+        Scanner scanner = new Scanner(System.in); // Ready for scanning
+        System.out.print("Please input your card notation: "); 
+        String input = scanner.next();
+        String rank;
+        String suit;
+    
+        // Splitting input before passing as an argument to getCardDescription
+        if (input.length() == 2) {  // Single-digit ranks
+            rank = input.substring(0, 1);  // E.g., "Q"
+            suit = input.substring(1, 2);  // "S"
+        } else if (input.length() == 3 && input.startsWith("10")) {  // "10" rank
+            rank = input.substring(0, 2);  // E.g., "10"
+            suit = input.substring(2, 3);  // "S"
         } else {
-            System.out.println("Invalid input format.");
-            scanner.close();
-            return;
+            rank = "";  // Invalid lengths to split
+            suit = "";
         }
-
-        String description = getCardDescription(rank, suit);
-        System.out.println(description);
-
-        scanner.close();
+    
+        String result = getCardDescription(rank, suit);
+        System.out.println(result);  // E.g., "Queen of Spades"
     }
 }
