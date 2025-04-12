@@ -1,6 +1,6 @@
 /*
  * This program converts inputed short hand notation into the cards description
- * @Author Essa Imhmed
+ * @author Essa Imhmed
  * Date: 3/27/25
  */
 import java.util.Scanner;
