@@ -615,11 +615,11 @@ def get_style_violation_example(violation_Type, tool_name):
                             elif current_line_number > endline:
                                 break # break after passing endLine
                     print(
-                        f"{filename}",
-                        f"{beginline}",
-                        f"{endline}",
-                        f"{message}",
-                        f"{extracted_lines}"
+                        f"filename: {filename}\n",
+                        f"begin line: {beginline}\n",
+                        f"end line: {endline}\n",
+                        f"message: {message}\n",
+                        f"example: {extracted_lines}\n"
                     )
                     output_lines.extend(
                         format_code_violation_example(filename, beginline, message, ("".join(extracted_lines)))
@@ -642,10 +642,10 @@ def get_style_violation_example(violation_Type, tool_name):
                                 extracted_lines.append(line)
                                 break # break after passing endLine
                     print(
-                        f"{filename}",
-                        f"{error_line}",
-                        f"{message}",
-                        f"{extracted_lines}"
+                        f"filename: {filename}\n",
+                        f"line: {error_line}\n",
+                        f"message: {message}\n",
+                        f"example: {extracted_lines}\n"
                     )
                     output_lines.extend(
                         format_code_violation_example(filename, error_line, message, ("".join(extracted_lines)))
