@@ -1,53 +1,97 @@
-/**
- * @author Essa Imhmed
- */
+import java.util.Scanner;
 
+/**
+ * This program gives a card description based on shorthand notation.
+ * Example: QS is Queen of Spades
+ * @author Essa Imhmed 
+ * @date March 26th 2025
+ */
 public class CardDescription {
-    
-        public static String getCardDescription(String rank, String suit) {
-            String rankDescription = "";
-            String suitDescription = "";
-            if (rank.equals("A")) {
-                rankDescription = "Ace";
-            } else if (rank.equals("2")||(rank.equals("3") || rank.equals("4") || rank.equals("5") || rank.equals("6")
-                    || rank.equals("7") || rank.equals("8") || rank.equals("9") || rank.equals("10"))) {
-                rankDescription = rank; 
-            } else if (rank.equals("J")) {
-                rankDescription = "Jack";
-            } else if (rank.equals("Q")) {
-                rankDescription = "Queen";
-            } else if (rank.equals("K")) {
-                rankDescription = "King";
-            } else {
-                return "Invalid rank Valid ranks are A, 2-10, J, Q, K.";
-            }
-    
-            if (suit.equals("D")) {
-                suitDescription = "Diamonds";
-            } else if (suit.equals("H")) {
-                suitDescription = "Hearts";
-            } else if (suit.equals("S")) {
-                suitDescription = "Spades";
-            } else if (suit.equals("C")) {
-                suitDescription = "Clubs";
-            } else {
-                return "Invalid suit Valid suits are D, H, S, C.";
-            }
-    
+
+    /**
+     * Main Method collects user input 
+     * @param args command line arguments 
+     */
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Please enter card notation (Exp: QS for Queen of Spades): ");
+        String inputCardNotation = scanner.next().toUpperCase(); // change input to uppercase for case sensitivity
+
+        // check that input length is 2 characters no more no less
+        if (inputCardNotation.length() < 2 || inputCardNotation.length() > 3) {
+            System.out.println("INVALID INPUT! Please try again using valid notation like QS, 10H, etc.");
+        } else {
             
-            return rankDescription + " of " + suitDescription;
+            // Separate rank and suit, isolate rank and isolate suit to find what they are 
+            String rank = inputCardNotation.substring(0, inputCardNotation.length() - 1);
+            String suit = inputCardNotation.substring(inputCardNotation.length() - 1);
+
+            // Get card description
+            String description = getCardDescription(rank, suit);
+            if (description != null) { // if one of the descriptions does not match null and print invalid card notation 
+                
+                System.out.println("Card Description: " + description);
+
+            } else {
+                
+                System.out.println("INVALID CARD NOTATION");
+            }
         }
-    
-        public static void main(String[] args) {
-            System.out.println(getCardDescription("Q", "S"));
-            System.out.println(getCardDescription("A", "D"));
-            System.out.println(getCardDescription("10", "H"));
-            System.out.println(getCardDescription("J", "C"));
-            System.out.println(getCardDescription("K", "S")); 
-    
-            System.out.println(getCardDescription("Z", "S")); 
-            System.out.println(getCardDescription("Q", "X"));
-            System.out.println(getCardDescription("11", "D"));
-            System.out.println(getCardDescription("A", "Z"));
-        }
+        scanner.close(); // Close scanner to prevent leaks
     }
+
+    /**
+     * Converts short notation to a full card description.
+     * @param rank the rank of the card (A, 2 to 10, J, Q, K)
+     * @param suit the suit of the card (Diamonds, Hearts, Spades, Clubs)
+     * @return the full description of the card or null if invalid
+     */
+    public static String getCardDescription(String rank, String suit) {
+        String rankDescription;
+        String suitDescription;
+
+        // Convert rank notation to full name, switch out letter for full description 
+        switch (rank) {
+            case "A":
+                rankDescription = "Ace";
+                break;
+            case "J":
+                rankDescription = "Jack";
+                break;
+            case "Q":
+                rankDescription = "Queen";
+                break;
+            case "K":
+                rankDescription = "King";
+                break;
+            case "2": case "3": case "4": case "5":
+            case "6": case "7": case "8": case "9": case "10":
+                rankDescription = rank;
+                break;
+            default:
+                return null; // Invalid rank
+        }
+
+        // Convert suit notation to full name, switch out letter for full description 
+        switch (suit) {
+            case "D":
+                suitDescription = "Diamonds";
+                break;
+            case "H":
+                suitDescription = "Hearts";
+                break;
+            case "S":
+                suitDescription = "Spades";
+                break;
+            case "C":
+                suitDescription = "Clubs";
+                break;
+            default:
+                return null; // Invalid suit
+        }
+
+        // Return full card description to the user
+        return rankDescription + " of " + suitDescription;
+    }
+}
