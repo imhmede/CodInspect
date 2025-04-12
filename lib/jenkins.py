@@ -604,9 +604,9 @@ def get_style_violation_example(violation_Type, tool_name):
             for violation in violations:
                 if violation.get("rule", "") == violation_Type:
                     filename = os.path.basename(violation.get("file", ""))
-                    beginline = violation.get("beginline", "")
-                    endline = int(violation.get("endline", ""))
-                    message = int(violation.get("message", ""))
+                    beginline = int(violation.get("beginline", 0))
+                    endline = int(violation.get("endline", 0))
+                    message = violation.get("message", "")
                     with open(f"Upload_here/{filename}", "r") as file:
                         for current_line_number, line in enumerate(file, start=1):
                             if beginline <= current_line_number <= endline:
