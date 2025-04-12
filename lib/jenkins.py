@@ -602,7 +602,7 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
 def get_style_violation_example(violation_Type, tool_name):
     output_lines = []
     print(violation_Type)
-    if len(violation_Type):
+    if len(violation_Type) == 0:
         output_lines.append(
             f"No errors to be found... Good job!"
         )
