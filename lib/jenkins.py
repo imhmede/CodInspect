@@ -519,8 +519,8 @@ def generate_checkStyle_output(number_of_checkstyle_violations, checkstyle_dict,
     
     if number_of_checkstyle_violations == 0:
         checkstyle_lines = [
-            f"\nPMD {'-' * 50}\n",
-            f"No errors detected... Good job!"
+            f"\nCheckStyle {'-' * 50}\n",
+            f"\nCheckStyle did not find any errors in your submission... Good job!"
         ]
 
     return checkstyle_lines, final_score, total_weighted_error_density
@@ -594,7 +594,7 @@ def generate_pmd_output(number_of_pmd_violations, pmd_dict, lines_of_code):
     if number_of_pmd_violations == 0:
         pmd_lines = [
             f"\nPMD {'-' * 50}\n",
-            f"No errors detected... Good job!"
+            f"\nPMD did not find any errors in your submission... Good job!"
         ]
 
     return pmd_lines, final_score, total_weighted_error_density
