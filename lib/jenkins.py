@@ -603,8 +603,10 @@ def get_style_violation_example(violation_Type, tool_name):
     output_lines = []
     print(violation_Type)
     if violation_Type == "None":
-        output_lines.append(
-            f"No errors to be found... Good job!"
+        output_lines.extend(
+            f"\n{"-" * 90}\n",
+            f"No errors detected... Good job!"
+            f"\n{"-" * 90}\n",
         )
         return output_lines
     
