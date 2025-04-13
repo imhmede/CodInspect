@@ -604,9 +604,9 @@ def get_style_violation_example(violation_Type, tool_name):
     print(violation_Type)
     if violation_Type == "None":
         output_lines.append(
-            f"\n{"-" * 90}\n",
+            f"\n{"-" * 90}\n"
             f"No errors detected... Good job!"
-            f"\n{"-" * 90}\n",
+            f"\n{"-" * 90}\n"
         )
         return output_lines
     
