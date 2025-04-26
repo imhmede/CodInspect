@@ -1,6 +1,6 @@
 import java.util.Scanner;
 /*
-@author David Burns
+@author Essa Imhmed
 @date February 16 2025
 * This Program derives the monogram initials of any string statement, but is specifically meant for use with names
 * Converts names into initials.
