@@ -8,7 +8,6 @@ from scipy.stats import percentileofscore
 
 
 def parse_checkstyle(xml_file_path):
-    print("test_file_path: ", test_file_path)
     try:
         tree = ET.parse(xml_file_path)  # Parse the XML file
         root = tree.getroot()  # Get the root element
@@ -67,6 +66,7 @@ def parse_pmd(xml_file_path):
  
 def parse_test_results(test_file_path):
     try:
+        print("test_file_path: ", test_file_path)
         with open(test_file_path, 'r') as file:
             lines = file.readlines()
  
@@ -129,6 +129,8 @@ def parse_test_results(test_file_path):
     except Exception as e:
         print(f"Failed to parse test results: {e}")
         return {}
+
+
 def create_json_output(student_name, check_date, checkstyle_errors, pmd_violations, test_results):
 
     # Count LOC but ignore white space
