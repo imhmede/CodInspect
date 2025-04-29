@@ -60,7 +60,7 @@
 
     <target name="clean">
         <!-- Delete the classes directory -->
-        <!-- <delete dir="${build.dir}" /> -->
+        <delete dir="${build.dir}" />
     </target>
 
     <target name="init" depends="clean">

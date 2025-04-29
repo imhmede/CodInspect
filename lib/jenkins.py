@@ -113,10 +113,17 @@ def parse_test_results(test_file_path):
             if current_test_case:
                 current_test_case["status"] = "FAILED"
                 current_test_case["failureDetails"] = {}
+        elif line.startswith("Caused an ERROR"): # define behavior for "Caused an ERROR" case
+            if current_test_case:
+                current_test_case["status"] = "ERROR"
+                current_test_case["failureDetails"] = {}
         elif line.startswith("expected:") and current_test_case:
             message = line.strip()
             current_test_case["failureDetails"]["message"] = message
         elif line.startswith("at ") and current_test_case:
+            # initialize failureDetails value as as empty dict to prevent None type
+            if "failureDetails" not in current_test_case: 
+                current_test_case["failureDetails"] = {}
             if "stackTrace" not in current_test_case["failureDetails"]:
                 current_test_case["failureDetails"]["stackTrace"] = []
             current_test_case["failureDetails"]["stackTrace"].append(line.strip())
@@ -214,16 +221,6 @@ if pmd_violations:
         print(f"File: {violation['file']}, Line: {violation['beginline']}, Rule: {violation['rule']}, Message: {violation['message']}, URL: {violation['externalInfoUrl']}")
 else:
     print("\\nNo PMD violations found or failed to parse the file.")
-
-print("Available test files:", test_files)
-print("Chosen test file:", test_file)
-print("Constructed test_file_path:", test_file_path)
-print("Does file exist?", os.path.exists(test_file_path))
-
-with open(test_file_path, 'r') as file:
-    lines = file.readlines()
-    print("FULL TEST FILE CONTENTS:")
-    print("".join(lines))
 
 test_results = parse_test_results(test_file_path)
  
