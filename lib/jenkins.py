@@ -844,6 +844,7 @@ def create_grade_report(json_output_file_path):
     checkstyle_violations = violations.get("checkstyle", []) 
     pmd_violations = violations.get("pmd", []) 
     unit_testing_report = violations.get("Unit testing", {})
+    print(unit_testing_report)
     
     number_of_checkstyle_violations = len(checkstyle_violations)
     number_of_pmd_violations = len(pmd_violations)
