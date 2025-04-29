@@ -220,6 +220,11 @@ print("Chosen test file:", test_file)
 print("Constructed test_file_path:", test_file_path)
 print("Does file exist?", os.path.exists(test_file_path))
 
+with open(test_file_path, 'r') as file:
+    lines = file.readlines()
+    print("FULL TEST FILE CONTENTS:")
+    print("".join(lines))
+
 test_results = parse_test_results(test_file_path)
  
 # Define metadata
