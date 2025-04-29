@@ -110,8 +110,6 @@
         <record name="${reports.dir}/test-output.txt" action="stop"/> -->
     </target>
 
-    <!-- <target name="rebuild" depends="clean, init, checkstyle, pmd, compile, test" /> -->
     <target name="rebuild" depends="clean, init, checkstyle, pmd, compile, test" />
 
     </project>
-
