@@ -214,7 +214,12 @@ if pmd_violations:
         print(f"File: {violation['file']}, Line: {violation['beginline']}, Rule: {violation['rule']}, Message: {violation['message']}, URL: {violation['externalInfoUrl']}")
 else:
     print("\\nNo PMD violations found or failed to parse the file.")
- 
+
+print("Available test files:", test_files)
+print("Chosen test file:", test_file)
+print("Constructed test_file_path:", test_file_path)
+print("Does file exist?", os.path.exists(test_file_path))
+
 test_results = parse_test_results(test_file_path)
  
 # Define metadata
