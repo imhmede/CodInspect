@@ -853,8 +853,8 @@ def create_grade_report(json_output_file_path):
     
     # get unit testing details
     unit_test_failures = get_failed_tests(unit_testing_report)
-    number_of_tests = int(unit_testing_report.get("summary").get("testsRun"))
-    number_of_failures = int(unit_testing_report.get("summary").get("failures"))
+    number_of_tests = int(unit_testing_report.get("summary").get("testsRun", 0))
+    number_of_failures = int(unit_testing_report.get("summary").get("failures", 0))
     
     # intro lines for report
     intro_lines = [
