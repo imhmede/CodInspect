@@ -8,6 +8,7 @@ from scipy.stats import percentileofscore
 
 
 def parse_checkstyle(xml_file_path):
+    print("test_file_path: ", test_file_path)
     try:
         tree = ET.parse(xml_file_path)  # Parse the XML file
         root = tree.getroot()  # Get the root element
