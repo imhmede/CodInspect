@@ -88,6 +88,7 @@ def parse_test_results(test_file_path):
         # Parse the file line by line
         for line in lines:
             line = line.strip()
+            print("Test-Line: ", line)
             if line.startswith("Testsuite:"):
                 result["testSuite"] = line.split(":")[1].strip()
             elif line.startswith("Tests run:"):
