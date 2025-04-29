@@ -183,7 +183,7 @@ test_file = test_files[0]  # Since there's only one file
 file_name, _ = os.path.splitext(test_file)  # Extract filename without extension
  
 # Construct the new report filename
-new_filename = f"TEST-{file_name}.txt"
+new_filename = f"TEST-Test{file_name}.txt"
 test_file_path = os.path.join(reports_dir, new_filename)
  
 #test_file_path = "build/test-reports/TEST-TestCases.txt"
