@@ -842,35 +842,35 @@ def update_json (student_name, error_density):
     
     check_json_exist()
     upload_dir_name = get_upload_dir_name()
-    try:
-        with open(RECORDS_FILE_PATH, 'r+') as file:
-            data = json.load(file)
-            
-            if upload_dir_name not in data:
-                data[upload_dir_name] = {}
-            
-            assignment_data = data[upload_dir_name]
-
-            
-            if student_name not in assignment_data:
-                assignment_data[student_name] = []
-                
-            student_data = assignment_data[student_name]
-            submission_count = len(student_data) + 1
-            new_submission = {
-                "counter": submission_count,
-                "error density": error_density
-            }
-            
-            student_data.append(new_submission)
-            
-            file.seek(0)
-            json.dump(data, file, indent=4)
-            file.truncate()
+    # try:
+    with open(RECORDS_FILE_PATH, 'r+') as file:
+        data = json.load(file)
         
-    except Exception as e:
-        print(e)
-        print("Failed to update json")
+        if upload_dir_name not in data:
+            data[upload_dir_name] = {}
+        
+        assignment_data = data[upload_dir_name]
+
+        
+        if student_name not in assignment_data:
+            assignment_data[student_name] = []
+            
+        student_data = assignment_data[student_name]
+        submission_count = len(student_data) + 1
+        new_submission = {
+            "counter": submission_count,
+            "error density": error_density
+        }
+        
+        student_data.append(new_submission)
+        
+        file.seek(0)
+        json.dump(data, file, indent=4)
+        file.truncate()
+        
+    # except Exception as e:
+    #     print(e)
+    #     print("Failed to update json")
 
 def check_json_exist():
     if not os.path.isfile(RECORDS_FILE_PATH):
