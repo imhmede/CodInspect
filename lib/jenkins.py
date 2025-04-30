@@ -877,11 +877,14 @@ def check_json_exist():
         try:
             with open(RECORDS_FILE_PATH, 'w') as file:
                 json.dump({}, file)
+                print(f"JSON FILE INITIALIZED AS EMPTY. READY")
         except Exception as e:
             print(e)
             print("Failed to check if json exists")
-            
-    return
+            return
+    else:
+        print(f"JSON ALREADY EXISTS (THAT'S OKAY).")     
+        return
 
 # generate grade report using the previously constructed JSON file
 def create_grade_report(json_output_file_path):
