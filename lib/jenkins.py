@@ -842,36 +842,40 @@ def update_json (student_name, error_density):
     
     check_json_exist()
     upload_dir_name = get_upload_dir_name()
-    # try:
-    with open(RECORDS_FILE_PATH, 'r+') as file:
-        print(f"JSON RECORDS FILE OPENED")
-        data = json.load(file)
-        
-        if upload_dir_name not in data:
-            data[upload_dir_name] = {}
-        
-        assignment_data = data[upload_dir_name]
-
-        
-        if student_name not in assignment_data:
-            assignment_data[student_name] = []
+    try:
+        with open(RECORDS_FILE_PATH, 'r+') as file:
+            print(f"JSON RECORDS FILE OPENED")
+            data = json.load(file)
             
-        student_data = assignment_data[student_name]
-        submission_count = len(student_data) + 1
-        new_submission = {
-            "counter": submission_count,
-            "error density": error_density
-        }
+            if upload_dir_name not in data:
+                data[upload_dir_name] = {}
+            
+            assignment_data = data[upload_dir_name]
+
+            
+            if student_name not in assignment_data:
+                assignment_data[student_name] = []
+                
+            student_data = assignment_data[student_name]
+            submission_count = len(student_data) + 1
+            new_submission = {
+                "counter": submission_count,
+                "error density": error_density
+            }
+            
+            student_data.append(new_submission)
+            
+            file.seek(0)
+            json.dump(data, file, indent=4)
+            file.truncate()
+            file.close()
+            print(f"JSON RECORDS SUCCESSUFLLY UPDATES.")
+            return
         
-        student_data.append(new_submission)
-        
-        file.seek(0)
-        json.dump(data, file, indent=4)
-        file.truncate()
-        
-    # except Exception as e:
-    #     print(e)
-    #     print("Failed to update json")
+    except Exception as e:
+        print(e)
+        print("Failed to update json")
+        return
 
 def check_json_exist():
     if not os.path.isfile(RECORDS_FILE_PATH):
