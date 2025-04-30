@@ -844,6 +844,7 @@ def update_json (student_name, error_density):
     upload_dir_name = get_upload_dir_name()
     # try:
     with open(RECORDS_FILE_PATH, 'r+') as file:
+        print(f"JSON RECORDS FILE OPENED")
         data = json.load(file)
         
         if upload_dir_name not in data:
