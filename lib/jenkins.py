@@ -255,6 +255,9 @@ grade_report_dir = "build/grade-reports/"
 grading_config_path = "lib/grading_config.json"
 os.makedirs(grade_report_dir, exist_ok=True)
 
+BUILD_XML_PATH = "build.xml"
+RECORDS_FILE_PATH = "records/records.json"
+
 # create a dynamic grade report file name
 grade_report_file_path = os.path.join(grade_report_dir, f"{check_date}.txt")
 
@@ -825,6 +828,61 @@ def calculate_percentile_score(checkStyle_error_density ,pmd_error_density, tota
     
     return percentile_checkstyle, percentile_pmd, percentile_overall
 
+def get_upload_dir_name():
+        # load the XML file
+    tree = ET.parse(BUILD_XML_PATH)
+    root = tree.getroot()
+    
+    for property in root.findall("property"):
+        if (property.get("name") == "src.dir"):
+            return property.get("location")
+    return "NONE"
+
+def update_json (student_name, error_density):
+    
+    check_json_exist()
+    upload_dir_name = get_upload_dir_name()
+    try:
+        with open(RECORDS_FILE_PATH, 'r+') as file:
+            data = json.load(file)
+            
+            if upload_dir_name not in data:
+                data[upload_dir_name] = {}
+            
+            assignment_data = data[upload_dir_name]
+
+            
+            if student_name not in assignment_data:
+                assignment_data[student_name] = []
+                
+            student_data = assignment_data[student_name]
+            submission_count = len(student_data) + 1
+            new_submission = {
+                "counter": submission_count,
+                "error density": error_density
+            }
+            
+            student_data.append(new_submission)
+            
+            file.seek(0)
+            json.dump(data, file, indent=4)
+            file.truncate()
+        
+    except Exception as e:
+        print(e)
+        print("Failed to update json")
+
+def check_json_exist():
+    if not os.path.isfile(RECORDS_FILE_PATH):
+        try:
+            with open(RECORDS_FILE_PATH, 'w') as file:
+                json.dump({}, file)
+        except Exception as e:
+            print(e)
+            print("Failed to check if json exists")
+            
+    return
+
 # generate grade report using the previously constructed JSON file
 def create_grade_report(json_output_file_path):
     """This function is the main function, calling all other functions during the process of creating the
@@ -945,6 +1003,8 @@ def create_grade_report(json_output_file_path):
         file.writelines(coding_style_summary_lines)
         file.writelines(unit_testing_lines)
         file.writelines(score_lines)
+        
+    update_json(student_name, total_weighted_density)
     
     print(f"Grade report created and saved to: {grade_report_file_path}")
         
