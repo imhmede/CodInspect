@@ -835,6 +835,7 @@ def get_upload_dir_name():
     
     for property in root.findall("property"):
         if (property.get("name") == "src.dir"):
+            print(f"SOURCE DIR NAME")
             return property.get("location")
     return "NONE"
 
