@@ -853,7 +853,6 @@ def update_json (student_name, error_density):
             
             assignment_data = data[upload_dir_name]
 
-            
             if student_name not in assignment_data:
                 assignment_data[student_name] = []
                 
@@ -870,7 +869,7 @@ def update_json (student_name, error_density):
             json.dump(data, file, indent=4)
             file.truncate()
             file.close()
-            print(f"JSON RECORDS SUCCESSUFLLY UPDATES.")
+            print(f"JSON RECORDS SUCCESSUFLLY UPDATED.")
             return
         
     except Exception as e:
