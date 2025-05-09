@@ -828,35 +828,32 @@ def calculate_percentile_score(checkStyle_error_density ,pmd_error_density, tota
     
     return percentile_checkstyle, percentile_pmd, percentile_overall
 
-def get_upload_dir_name():
-        # load the XML file
-    tree = ET.parse(BUILD_XML_PATH)
-    root = tree.getroot()
+def update_json (student_name, error_density, upload_dir_name):
     
-    for property in root.findall("property"):
-        if (property.get("name") == "src.dir"):
-            print(f"SOURCE DIR NAME")
-            return property.get("location")
-    return "NONE"
-
-def update_json (student_name, error_density):
-    
-    check_json_exist()
-    upload_dir_name = get_upload_dir_name()
+    if not check_json_exists():
+        print(f"Error: JSON file does not exist under {RECORDS_FILE_PATH}")
+        return
     try:
         with open(RECORDS_FILE_PATH, 'r+') as file:
-            print(f"JSON RECORDS FILE OPENED")
-            data = json.load(file)
+            content = file.read().strip()
+            if content:
+                data = json.loads(content)
+            else:
+                data = {}
+            
+            if not upload_dir_name:
+                print("Failed to get upload directory name.")
+                return
             
             if upload_dir_name not in data:
                 data[upload_dir_name] = {}
             
-            assignment_data = data[upload_dir_name]
+            directory_data = data[upload_dir_name]
 
-            if student_name not in assignment_data:
-                assignment_data[student_name] = []
+            if student_name not in directory_data:
+                directory_data[student_name] = []
                 
-            student_data = assignment_data[student_name]
+            student_data = directory_data[student_name]
             submission_count = len(student_data) + 1
             new_submission = {
                 "counter": submission_count,
@@ -868,28 +865,120 @@ def update_json (student_name, error_density):
             file.seek(0)
             json.dump(data, file, indent=4)
             file.truncate()
-            file.close()
-            print(f"JSON RECORDS SUCCESSUFLLY UPDATED.")
-            return
+            print("JSON records updated successfully.")
         
     except Exception as e:
         print(e)
         print("Failed to update json")
-        return
 
-def check_json_exist():
+def get_upload_dir_name():
+    # load the build.xml file
+    tree = ET.parse(BUILD_XML_PATH)
+    root = tree.getroot()
+    for property in root.findall("property"):
+        if (property.get("name") == "src.dir"):
+            return property.get("location")
+    print(f"Failed to get upload directory name from {BUILD_XML_PATH}")
+
+def check_json_exists():
     if not os.path.isfile(RECORDS_FILE_PATH):
         try:
             with open(RECORDS_FILE_PATH, 'w') as file:
-                json.dump({}, file)
-                print(f"JSON FILE INITIALIZED AS EMPTY. READY")
+                json.dump({}, file, indent=4)
+            print(f"JSON records file created under {RECORDS_FILE_PATH}")
+            return True
         except Exception as e:
             print(e)
             print("Failed to check if json exists")
-            return
-    else:
-        print(f"JSON ALREADY EXISTS (THAT'S OKAY).")     
+            return False
+    print(f"JSON records file found at {RECORDS_FILE_PATH}")
+    return True
+
+def compare_score_with_self(student_name, error_density, upload_dir_name):
+    if not check_json_exists():
+        print(f"Error: JSON file does not exist under {RECORDS_FILE_PATH}")
         return
+    
+    with open(RECORDS_FILE_PATH, 'r') as file:
+        data = json.load(file)
+        assignment_data = data.get(upload_dir_name, {})
+        
+        if not assignment_data:
+            print(f"There are no records under {upload_dir_name}")
+            return
+        
+        student_data = assignment_data.get(student_name, [])
+        
+        if not student_data:
+            print(f"There are no records for {student_name} under {upload_dir_name}")
+            return
+        
+        error_density_list = []
+        
+        for record in student_data: # iterate over all submission records of student for this assigment
+            error_density_list.append(record.get("error density", 0))
+        
+        if len(error_density_list) <= 1: # if this is the first submission for this assignment
+            return
+        
+        # average recorded error density across all submissions the student made for this assignment
+        average_error_density = round(sum(error_density_list) / len(error_density_list), 4)
+        # reltive change compared to the last submission
+        relative_change = round(error_density / error_density_list[(len(error_density_list) - 2)], 4) * 100
+        
+        print(
+            f"\n{'=' * 30}",
+            f"\nYour average error density for this assignment is: {average_error_density}",
+            f"\nThe error density of this submission is {relative_change}% of your last submission.",
+            f"\n{'=' * 30}"
+        )
+        
+        return average_error_density, relative_change
+
+def compare_score_with_class(error_density, upload_dir_name):
+    if not check_json_exists():
+        print(f"Error: JSON file does not exist under {RECORDS_FILE_PATH}")
+        return
+    
+    with open(RECORDS_FILE_PATH, 'r') as file:
+        data = json.load(file)
+        assignment_data = data.get(upload_dir_name, {})
+        
+        if not assignment_data: # if no records under this directory name
+            print(f"There are no records under {upload_dir_name}")
+            return
+        
+        error_density_list = [] # initialize list to store the error_density values
+        
+        for student in assignment_data: # iterate over all student records within the assigment
+            if not student: # if student record is empty 
+                continue
+            for submission in assignment_data.get(student): # iterate over every submission
+                if not submission:
+                    continue
+                error_density_list.append(submission.get("error density"))
+                
+        # calculate average error of all student submissions for this assignment
+        average_assignment_error = round(sum(error_density_list) / len(error_density_list), 4) 
+        # compare the score of the current submission to the overall average
+        score_relative_to_class = round(error_density / average_assignment_error, 4)
+        
+        # change output variables based on whether the errordensity is higher or lower
+        if score_relative_to_class < 1:
+            percent_value = (1 - score_relative_to_class) * 100
+            comparator = "lower"
+        else:
+            percent_value = (score_relative_to_class - 1) * 100
+            comparator = "higher"
+        
+        print(
+            f"\n{'=' * 30}"
+            f"\nThe average error density of the class for this assignment is: {average_assignment_error}",
+            f"\nYour error density was {round(percent_value, 2)}% {comparator} than the class average.",
+            f"\n{'=' * 30}"
+        )
+        
+        return average_assignment_error, score_relative_to_class
 
 # generate grade report using the previously constructed JSON file
 def create_grade_report(json_output_file_path):
@@ -1011,8 +1100,15 @@ def create_grade_report(json_output_file_path):
         file.writelines(coding_style_summary_lines)
         file.writelines(unit_testing_lines)
         file.writelines(score_lines)
-        
-    update_json(student_name, total_weighted_density)
+    
+    upload_dir_name = get_upload_dir_name()
+    
+    if upload_dir_name:
+        update_json(student_name, total_weighted_density, upload_dir_name)
+        compare_score_with_class(total_weighted_density, upload_dir_name)
+        compare_score_with_self(student_name, total_weighted_density, upload_dir_name)
+    else:
+        print("Upload directory name is None.")
     
     print(f"Grade report created and saved to: {grade_report_file_path}")
         
